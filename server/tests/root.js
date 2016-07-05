@@ -1,13 +1,13 @@
 "use strict";
 
+var HOST = 'http://localhost:8080';
+var HOST_API = HOST + '/api';
+
 var assert = require('chai').assert;
 var request = require('superagent');
 var server = require('../app');
 var status = require('http-status');
 var chai = require("chai");
-
-chai.should();
-chai.use(require('chai-things'));
 
 describe('Check root operations', function() {
 
@@ -19,8 +19,8 @@ describe('Check root operations', function() {
 
     });
 
-    it('should allow connections to port 8080', function(done) {
-        request.get('http://localhost:8080')
+    it('should allow connections to port', function(done) {
+        request.get(HOST)
             .send({})
             .type('application/hal+json')
             .accept('json')
@@ -32,7 +32,7 @@ describe('Check root operations', function() {
     });
 
     it('should redirect / to /api', function(done) {
-        request.get('http://localhost:8080')
+        request.get(HOST)
             .send({})
             .type('application/hal+json')
             .accept('json')
@@ -45,7 +45,7 @@ describe('Check root operations', function() {
     });
 
     it('should support api version 1.0', function(done) {
-        request.get('http://localhost:8080/api/version')
+        request.get(HOST_API + '/version')
             .send({'version' : '1.0'})
             .type('application/hal+json')
             .accept('json')
@@ -59,7 +59,7 @@ describe('Check root operations', function() {
     });
 
     it('should have self link', function(done) {
-        request.get('http://localhost:8080/api')
+        request.get(HOST_API)
             .type('application/hal+json')
             .accept('json')
             .set('X-api-version','1.0')

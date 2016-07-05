@@ -6,7 +6,7 @@ var express = require('express');
 var status = require('http-status');
 var app = express();
 var halson = require('halson');
-
+var register = require('./registration/register');
 
 app.get('/', function (req, res) {
     res.redirect('/api');
@@ -16,7 +16,7 @@ app.get('/api/version', function (req, res) {
     var version = halson({
         supportedVersions: ['1.0']
     });
-
+    register.sayHello();
     res.json(version);
 });
 

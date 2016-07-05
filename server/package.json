@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "express": "^4.14.0",
+    "halson": "^2.3.1",
     "http-status": "^0.2.3"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.5.3",
     "superagent": "^2.0.0",
+    "superagent-defaults": "^0.1.14",
     "supertest": "^1.2.0",
     "wd": "^0.4.0"
   }

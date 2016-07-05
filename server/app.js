@@ -1,20 +1,44 @@
 "use strict";
 
-const PORT  =   8080;
+var PORT = 8080;
 
 var express = require('express');
 var status = require('http-status');
 var app = express();
+var halson = require('halson');
 
-app.post('/', function (req, res) {
-  res.json({'version' : "0.1","operations" : [{"op" : "mainLights"}]});
-  res.status(200);
+
+app.get('/', function (req, res) {
+    res.redirect('/api');
 });
 
-app.all('/',function (req,res) {
-    res.status(status.NOT_IMPLEMENTED);
+app.get('/api/version', function (req, res) {
+    var version = halson({
+        supportedVersions: ['1.0']
+    });
+
+    res.json(version);
 });
+
+app.get('/api', function (req, res) {
+    var root = halson({
+        description: "An API for control of the Mitsubishi PHEV",
+        version: '1.0'
+    })
+        .addLink('self', '/api')
+        .addLink('register','/api/register');
+    res.json(root);
+});
+
+app.put('/api/register', function (req, res) {
+    var root = halson({
+        response: "OK"
+    })
+        .addLink('self', '/api/register');
+    res.json(root);
+});
+
 
 app.listen(PORT, function () {
-  console.log('PHEV server app listening on port ' + PORT);
+    console.log('PHEV server app listening on port ' + PORT);
 });

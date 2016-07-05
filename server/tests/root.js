@@ -12,11 +12,11 @@ var chai = require("chai");
 describe('Check root operations', function() {
 
     before(function() {
-
+//  Set up
     });
 
     after(function() {
-
+// Tear down
     });
 
     it('should allow connections to port', function(done) {

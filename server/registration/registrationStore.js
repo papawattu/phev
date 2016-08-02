@@ -1,3 +1,5 @@
+"use strict";
+
 var mongo = require('mongodb').MongoClient;
 
 var registrationStore = {

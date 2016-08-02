@@ -1,3 +1,5 @@
+"use strict";
+
 var registrationStore = require('./registrationStore');
 var registrationUser = require('./registrationDomain').user;
 

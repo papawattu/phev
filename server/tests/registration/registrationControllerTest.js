@@ -1,5 +1,6 @@
-var globals = require('../../common/global');
+"use strict";
 
+var globals = require('../../common/global');
 var REG_API = globals.HOST_API + '/register';
 var assert = require('chai').assert;
 var request = require('superagent');

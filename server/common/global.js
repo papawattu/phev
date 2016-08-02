@@ -1,4 +1,3 @@
-var morgan = require('morgan');
 var winston = require('winston');
 
 var PROTOCOL    = process.env.PROTOCOL || 'http',

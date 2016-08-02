@@ -1,8 +1,10 @@
 "use strict";
 
-var HOST = 'http://localhost:8080';
-var HOST_API = HOST + '/api';
-
+var globals = require('../common/global');
+var HOST = globals.HOST;
+var HOST_API = globals.HOST_API;
+var PROTOCOL = globals.PROTOCOL;
+var PORT = globals.PORT;
 var assert = require('chai').assert;
 var request = require('superagent');
 var server = require('../app');
@@ -20,7 +22,7 @@ describe('Check root operations', function() {
     });
 
     it('should allow connections to port', function(done) {
-        request.get(HOST)
+        request.get(PROTOCOL + '://' + HOST + ':' + PORT)
             .send({})
             .type('application/hal+json')
             .accept('json')
@@ -32,7 +34,7 @@ describe('Check root operations', function() {
     });
 
     it('should redirect / to /api', function(done) {
-        request.get(HOST)
+        request.get(PROTOCOL + '://' + HOST + ':' + PORT) 
             .send({})
             .type('application/hal+json')
             .accept('json')

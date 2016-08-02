@@ -1,3 +1,5 @@
+var mongo = require('mongodb').MongoClient;
+
 var registrationStore = {
     set : function (user) {
 
@@ -5,6 +7,6 @@ var registrationStore = {
     get : function (user) {
         return false;
     }
-}
+};
 
 module.exports = registrationStore;

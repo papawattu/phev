@@ -1,5 +1,5 @@
 var registrationStore = require('./registrationStore');
-var registrationUser = require('./registrationDomain.js').user;
+var registrationUser = require('./registrationDomain').user;
 
 var registrationService = {
     createUser : function (username,firstname,lastname,email,password) {
@@ -11,9 +11,6 @@ var registrationService = {
             email : email,
             password : password
         };
-        console.log('username ' + username + ' first name ' + firstname + ' last name ' + lastname
-            + ' email ' + email + ' password ' + password);
-
 
         if(registrationStore.get(registrationUser)) {
             console.log('User ' + user.username + ' cannot be registered already exists.');
@@ -26,6 +23,6 @@ var registrationService = {
         }
         return true;
     }
-}
+};
 
 module.exports = registrationService;

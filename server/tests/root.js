@@ -14,6 +14,7 @@ var chai = require("chai");
 describe('Check root operations', function() {
 
     before(function() {
+        console.log(HOST_API);
 //  Set up
     });
 

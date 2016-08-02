@@ -4,7 +4,7 @@
   "description": "Provides a server that implements the Mitsubish PHEV Remote App interface.",
   "main": "app.js",
   "scripts": {
-    "test": "cross-env PORT=8080 mocha --recursive ./tests/"
+    "test": "mocha --recursive ./tests/"
   },
   "eslintConfig": ".eslintrc.json",
   "repository": {

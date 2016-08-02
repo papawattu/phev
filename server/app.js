@@ -31,9 +31,6 @@ logger.stream = {
     }
 };
 
-logger.debug('HOST is : ' + global.HOST);
-logger.debug('HOST API is : ' + global.HOST_API);
-logger.debug('PORT is : ' + global.PORT);
 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 
@@ -71,5 +68,9 @@ app.use('/api',require('./root/indexController'));
 app.use('/api/register',require('./registration/registrationController'));
 
 app.listen(global.PORT, function () {
-    console.log('PHEV server app listening on port ' + global.PORT);
+
+    logger.debug('HOST is : ' + global.HOST);
+    logger.debug('HOST API is : ' + global.HOST_API);
+    logger.debug('PORT is : ' + global.PORT);
+    logger.info('PHEV server app listening on port ' + global.PORT);
 });

@@ -1,5 +1,6 @@
 .idea/
 .vscode/
 node_modules/
+coverage/
 phev.iml
 npm-debug.log

@@ -1,0 +1,4 @@
+{ 
+  "name" : "Operations",
+  "main" : "operationsPlugin.js"
+}

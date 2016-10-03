@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test-unit", 
-    "test-unit" : "mocha --require co-mocha lib/*.spec.js"
+    "test": "npm run test-unit",
+    "test-unit": "mocha --require co-mocha lib/*.spec.js"
   },
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/papawattu/phev.git"
   },
@@ -21,5 +21,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "hapi": "^15.1.1"
+  }
 }

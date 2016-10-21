@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test-unit",
-    "test-unit": "mocha --require co-mocha lib/*.spec.js"
+    "test-unit": "./node_modules/.bin/mocha --recursive lib/**/**.spec.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +18,10 @@
     "chai": "^3.5.0",
     "co-mocha": "^1.1.3",
     "eslint": "^3.5.0",
+    "http-status": "^0.2.3",
     "istanbul": "^0.4.5",
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "superagent": "^2.3.0"
   },
   "dependencies": {
     "hapi": "^15.1.1"

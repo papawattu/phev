@@ -1,0 +1,4 @@
+{ 
+  "name" : "HttpApiManager",
+  "main" : "httpApiManager.js"
+}

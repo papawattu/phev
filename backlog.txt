@@ -1,0 +1,20 @@
+Registration
+	As a user I should be able to register my PHEV so that I can control my car over the internet.
+		-Registration should capture 
+			Full name
+			A username which must me unique
+			email address which the systems does not already have registered
+	As a user I will be able to register my PHEV device
+		Capture the UID of the device
+
+	As a user I should be able to set the wifi details of my PHEV so that it can be controlled remotely
+		SSID and password of PHEV
+		SSID and password of home wifi (optional)	
+	
+	As a user I should receive an email from the system to verify my account so that my email address can be validated
+		- email sent to user on registration 
+		- contains a link to activate account
+		
+Logon
+	As a user I want my information to be safe and not accessable by anyone else other than me
+Home page

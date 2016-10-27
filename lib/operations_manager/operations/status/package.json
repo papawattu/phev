@@ -1,4 +1,4 @@
 { 
-  "name" : "operations",
+  "name" : "status",
   "main" : "plugin.js"
 }

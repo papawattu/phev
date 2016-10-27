@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test-unit",
-    "test-unit": "./node_modules/.bin/mocha --recursive lib/**/**/*.spec.js"
+    "test-unit": "./node_modules/.bin/mocha --recursive lib/**/**/**.spec.js"
   },
   "repository": {
     "type": "git",

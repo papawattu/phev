@@ -1,5 +1,5 @@
 {
   "version": "1.0.0",
   "description": "PHEV server",
-  "main": "App.js"
+  "main": "app.js"
 }

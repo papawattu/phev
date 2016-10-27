@@ -1,0 +1,4 @@
+{ 
+  "name" : "operations",
+  "main" : "plugin.js"
+}

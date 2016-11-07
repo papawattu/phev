@@ -21,6 +21,7 @@
     "http-status": "^0.2.3",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
+    "redis-js": "^0.1.2",
     "superagent": "^2.3.0"
   },
   "dependencies": {

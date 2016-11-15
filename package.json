@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "npm run test-unit",
     "test-unit": "./node_modules/.bin/_mocha --recursive ./lib/",
     "eslint": "./node_modules/.bin/eslint lib/**"

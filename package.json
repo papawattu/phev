@@ -7,7 +7,7 @@
     "start": "node index.js",
     "test": "npm run test-unit",
     "test-unit": "./node_modules/.bin/_mocha --recursive ./lib/",
-    "eslint": "./node_modules/.bin/eslint lib/**"
+    "eslint": "./node_modules/.bin/eslint ./lib --fix"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "winston": "^2.2.0"
   },
   "pre-commit": [
-    "eslint"
+    "eslint",
+    "test"
   ]
 }

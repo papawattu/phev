@@ -1,4 +1,4 @@
 { 
-  "name" : "api",
-  "main" : "api.js"
+  "name" : "operations_manager",
+  "main" : "operations_manager.js"
 }

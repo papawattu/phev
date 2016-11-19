@@ -3,6 +3,6 @@
 node_modules/
 coverage/
 rest/
-logs/
+logs/*.log
 phev.iml
 npm-debug.log

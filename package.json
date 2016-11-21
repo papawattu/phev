@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "npm run test-unit",
-    "test-unit": "./node_modules/.bin/_mocha --recursive ./lib/ ./lib/common/util.js",
+    "test-unit": "./node_modules/.bin/_mocha --harmony --recursive ./lib/ ./lib/common/util.js",
     "eslint": "./node_modules/.bin/eslint ./lib --fix"
   },
   "repository": {

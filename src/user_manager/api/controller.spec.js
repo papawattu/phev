@@ -2,14 +2,14 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const assert = chai.assert;
-const status = require('http-status');
-const httpMocks = require('node-mocks-http');
+//const assert = chai.assert;
+//const status = require('http-status');
+//const httpMocks = require('node-mocks-http');
 
 chai.use(chaiAsPromised);
  
-const UserManagerApiController = require('./controller');
-const sut = new UserManagerApiController();
+//const UserManagerApiController = require('./controller');
+//const sut = new UserManagerApiController();
 
 describe('User manager controller', () => {
 	it('Should register vehicle', () => {

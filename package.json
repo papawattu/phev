@@ -4,10 +4,12 @@
   "description": "Mitsubishi Outlander PHEV remote control application",
   "main": "index.js",
   "scripts": {
+    "build": "babel src -d lib",
     "start": "node index.js",
     "test": "npm run test-unit",
-    "test-unit": "./node_modules/.bin/_mocha --harmony --recursive ./lib/ ./lib/common/util.js",
-    "eslint": "./node_modules/.bin/eslint ./lib --fix"
+    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --harmony --recursive ./src ./src/common/util.js",
+    "test-watch": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --watch --reporter dot --harmony --recursive ./src/ ./src/common/util.js",
+    "eslint": "./node_modules/.bin/eslint ./src --fix"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,10 @@
   "author": "Jamie Nuttall",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "co-mocha": "^1.1.3",
@@ -26,6 +32,7 @@
     "istanbul": "^0.4.5",
     "jscs": "^3.0.7",
     "mocha": "^3.0.2",
+    "node-mocks-http": "^1.5.4",
     "pre-commit": "^1.1.3",
     "redis-js": "^0.1.2",
     "superagent": "^2.3.0"

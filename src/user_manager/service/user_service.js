@@ -1,38 +1,54 @@
 'use strict';
-const Logger = require('../../common/util').logger;
-const Store = require('../../common/store/promise_store');
-const StoreNS = 'users.';
+import 'babel-polyfill';
+import { Logger } from 'winston';
+import { Message } from '../../common/message_bus';
+import { Store } from '../../common/store/new_store_sync';
 
-module.exports = function UserService({logger = Logger} = {}) {
 
-	const store = new Store();
-	//const logger = Logger;
-	function _getUser(userId) {
+const logger = new Logger();
+
+class UserService {
+	constructor({messageBus} = {}) {
+
+		this.commands = [{
+			name: 'GET',
+			numArgs: 1,
+			handle: this.getUser,
+		}];
+		this.messageBus = messageBus;
+		this.store = new Store();
+
+		messageBus.receiveMessagesFilter('user', {type: 'REQUEST'},(message) => {
+			const replyMessage = Message.replyTo(message);
+			replyMessage.payload = 
+				this._findCommand(message.command)
+					.handle.call(this,message.payload);
+			messageBus.sendMessage(replyMessage);
+		});
+	}
+	_findCommand(cmd) {
+		return this.commands.find(e => e.name === cmd);
+	}
+	_isValidCommand(cmd) {
+		return (this._findCommand(cmd) != undefined);
+	}
+	_handleCommand(cmd, data) {
+		//if (!this._isValidCommand(cmd)) throw new Error('Invalid command on bus ' + cmd);
+		return this._findCommand(cmd).handle(cmd, data);
+	}
+	getUser(userId) {
 		logger.debug('Call to get user userId ' + userId);
-		return store.get(StoreNS + userId).then(data => {
-			return data;
-		});
+		return (this.store.get(userId) != undefined?this.store.get(userId).value:undefined);
 	}
-	function _getUsers() {
+	getUsers() {
 		logger.debug('Call to get users userId ');
-		return store.get('users').then(data => {
-			return data;
-		});
+		return this.store.getAll();
 	}
-	function _addUser(user) {
+	addUser(user) {
 		logger.debug('Call to register user ' + user);
-		return _getUser(user.userId).then((exists)=> {
-			if(exists) {
-				return Promise.reject();
-			}
-			return store.set(StoreNS + user.userId, user);
-		},()=> {
-			return Promise.reject();
-		});
+		if(this.store.has(user.userId)) throw new Error('User already exists ' + user.userId);
+		this.store.set(user.userId, user);
 	}
-	return {
-		getUser: _getUser,
-		getUsers: _getUsers,
-		addUser: _addUser,
-	};
-};
+}
+
+export { UserService };

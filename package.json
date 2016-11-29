@@ -38,6 +38,7 @@
     "superagent": "^2.3.0"
   },
   "dependencies": {
+    "babel-polyfill": "^6.16.0",
     "boom": "^4.2.0",
     "cache-base": "^0.8.4",
     "eslint": "^3.10.2",

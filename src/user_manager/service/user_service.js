@@ -7,6 +7,8 @@ import { Store } from '../../common/store/new_store_sync';
 
 const logger = new Logger();
 
+const USER_TOPIC = 'user';
+
 class UserService {
 	constructor({messageBus} = {}) {
 
@@ -14,11 +16,15 @@ class UserService {
 			name: 'GET',
 			numArgs: 1,
 			handle: this.getUser,
+		},{
+			name: 'ADD',
+			numArgs: 1,
+			handle: this.addUser,
 		}];
 		this.messageBus = messageBus;
 		this.store = new Store();
 
-		messageBus.receiveMessagesFilter('user', {type: 'REQUEST'},(message) => {
+		messageBus.receiveMessagesFilter(USER_TOPIC, {type: 'REQUEST'},(message) => {
 			const replyMessage = Message.replyTo(message);
 			replyMessage.payload = 
 				this._findCommand(message.command)

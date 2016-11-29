@@ -45,4 +45,18 @@ describe('User service message bus', () => {
 		});
 		messageBus.sendMessage(message);
 	});
+	it('Should handle ADD command',(done) => {
+		const addMessage = new Message({topic : 'user',type: 'REQUEST', command: 'ADD', payload : {userId : '987654321'}, correlation: true});
+		const getMessage = new Message({topic : 'user',type: 'REQUEST', command: 'GET', payload : '987654321', correlation: true});
+
+		messageBus.receiveMessagesFilter('user',{correlationId: addMessage.correlationId,type: 'REPLY'}, (data) => {
+			assert.isUndefined(data.payload,{userId: '987654321'});
+			messageBus.receiveMessagesFilter('user',{correlationId: getMessage.correlationId,type: 'REPLY'}, (data) => {
+				assert.deepEqual(data.payload,{userId: '987654321'});
+				done();
+			});
+			messageBus.sendMessage(getMessage);
+		});
+		messageBus.sendMessage(addMessage);
+	});
 });

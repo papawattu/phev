@@ -41,9 +41,11 @@
     "boom": "^4.2.0",
     "cache-base": "^0.8.4",
     "eslint": "^3.10.2",
+    "event-to-promise": "^0.7.0",
     "hapi": "^15.2.0",
     "joi": "^10.0.1",
     "mocha": "^3.1.2",
+    "uuid": "^3.0.1",
     "winston": "^2.3.0"
   },
   "pre-commit": [

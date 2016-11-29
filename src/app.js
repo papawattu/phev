@@ -1,12 +1,17 @@
 'use strict';
+const MessageBus = require('./common/message_bus').MessageBus;
 const logger = require('./common/logging');
 const OpManager = require('./operations_manager');
 const VehicleMgr = require('./vehicle_manager');
 
+
 module.exports = function App() {
 
+	const messageBus = new MessageBus('main');
 	const opmgr = new OpManager();
 	const vmgr = new VehicleMgr();
+
+	messageBus.start();
 
 	opmgr.start(() => {
 		logger.info('Started Operations Manager service.');

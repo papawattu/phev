@@ -13,33 +13,45 @@ module.exports = function App() {
 
 	messageBus.start();
 
-	opmgr.start(() => {
-		logger.info('Started Operations Manager service.');
+	process.on('SIGTERM', function () {
+		logger.info('SIGTERM - Stopping application');
+		_stop(10000 * 20, () => {
+			logger.info('Application stopped');
+			process.exit(0);
+		});
 	});
-	vmgr.start(() => {
-		logger.info('Started Vehicle Manager service.');
-	});
+	try {
+		opmgr.start(() => {
+			logger.info('Started Operations Manager service.');
+		});
+		vmgr.start(() => {
+			logger.info('Started Vehicle Manager service.');
+		});
+	} catch (err) {
+		throw err;
+	}
+	function _stop(timeout, done) {
+		logger.info('Stopping services');
+		opmgr.stop({ timeout: timeout }, (err) => {
+			if (err) {
+				logger.error('Operations Manager Server failed to stop ' + err);
+				done(err);
+			}
+			logger.info('Operations Manager Server stopped');
+		});
+		vmgr.stop({ timeout: timeout }, (err) => {
+			if (err) {
+				logger.error('Vehicle Manager Server failed to stop ' + err);
+				done(err);
+			}
+			logger.info('Vehicle Manager Server stopped');
+			done();
+		});
+	}
 
 	return {
-		stop : (timeout,done) => {
-			logger.info('Stopping services');
-			opmgr.stop({ timeout : timeout }, (err) => {
-				if(err) {
-					logger.error('Operations Manager Server failed to stop ' + err);
-					done(err);
-				}
-				logger.info('Operations Manager Server stopped');
-			});
-			vmgr.stop({ timeout: timeout},(err) => {
-				if(err) {
-					logger.error('Vehicle Manager Server failed to stop ' + err);
-					done(err);
-				}
-				logger.info('Vehicle Manager Server stopped');
-				done();
-			});
-		},
-		status : () => {
+		stop: _stop,
+		status: () => {
 			return [];
 		}
 	};

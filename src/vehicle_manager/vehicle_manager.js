@@ -16,10 +16,12 @@ module.exports = function VehicleMgr() {
 	const vehicleCommandHandler = new VehicleCommandHandler();
 	let httpServer = null;
 	let server = null;
+	let vmStatus = 'STOPPED';
+	let vmApi = 'STOPPED';
 
 	function _startIPServer() {
 		return new Promise((resolve) => {
-			const server = net.createServer(function (socket) {
+			server = net.createServer(function (socket) {
 				socket.write('HELLO PHEV' + CRLF);
 				socket.on('connect', () => {
 					logger.debug('Client connected ' + socket.toString());
@@ -31,15 +33,24 @@ module.exports = function VehicleMgr() {
 					});
 				});
 			});
-			server.listen(process.env.VM_PORT || VM_PORT, '0.0.0.0', () => {
-				logger.info('Vehicle Manager listening on port ' + VM_PORT);
+			server.on('error', (err) => {
+				throw err;
 			});
-			resolve(server);
+			try {
+				server.listen(process.env.VM_PORT || VM_PORT, '0.0.0.0', () => {
+					logger.info('Vehicle Manager listening on port ' + VM_PORT);
+					vmStatus = 'STARTED';
+					resolve(server);
+				});
+			} catch (err) {
+				logger.error('Vehicle manager failed to start : ' + err);
+				throw err;
+			}
 		});
 	}
 	function _startHttpServer() {
 		return new Promise((resolve, reject) => {
-			const httpServer = new hapi.Server();
+			httpServer = new hapi.Server();
 
 			httpServer.connection({ port: process.env.VM_API_PORT || API_PORT });
 			httpServer.start((err) => {
@@ -48,6 +59,7 @@ module.exports = function VehicleMgr() {
 				}
 				_registerPlugins(httpServer);
 				logger.info('Vehicle Manager Http Api manager listening', httpServer.info.uri);
+
 				resolve(httpServer);
 			});
 
@@ -69,43 +81,62 @@ module.exports = function VehicleMgr() {
 	}
 	function _start(done) {
 
-		const startIPProm = _startIPServer();
-		const startHttpProm = _startHttpServer();
-
-		Promise.all([startIPProm, startHttpProm])
-			.then((resp) => {
-				server = resp[0];
-				httpServer = resp[1];
-				done();
-			})
-			.catch((err) => {
+		if (vmStatus != 'STARTED') {
+			_startIPServer().then(() => {
+				vmStatus = 'STARTED';
+			}).catch((err) => {
 				throw err;
 			});
+		} else {
+			logger.info('Vehicle manaer already started');
+			done();
+		}
+		if (vmApi != 'STARTED') {
+			_startHttpServer().then(() => {
+				vmApi = 'STARTED';
+			}).catch((err) => {
+				throw err;
+			});
+		}
+		done();
 	}
-
 	function _stop(timeout, done) {
 
 		Promise.all([
 			new Promise((resolve, reject) => {
-				server.close((err) => {
-					if (err) {
-						reject(err);
-					}
-					logger.info('Vehicle Manager all connections closed and shut down.');
-				});
+				if (vmStatus === 'STARTED') {
+					server.close((err) => {
+						if (err) {
+							reject(err);
+						}
+						vmStatus = 'STOPPED';
+						logger.info('Vehicle Manager IP connections closed and shut down.');
+						resolve();
+					});
+				} else {
+					logger.info('Tried to stop Vehicle Manager when it was not started');
+					resolve();
+				}
 			}),
 			new Promise((resolve, reject) => {
-				httpServer.stop({ 'timeout': timeout }, (err) => {
-					if (err) {
-						reject(err);
-					}
-					logger.info('Vehicle Manager api connections closed and shut down.');
-					done();
-				});
+				if (vmApi === 'STARTED') {
+					httpServer.stop({ 'timeout': timeout }, (err) => {
+						if (err) {
+							reject(err);
+						}
+						vmApi = 'STOPPED';
+						logger.info('Vehicle Manager API connections closed and shut down.');
+						resolve();
+					});
+				} else {
+					logger.info('Tried to stop Vehicle API when it was not started');
+					resolve();
+				}
 			})
 		]).then(() => {
 			done();
 		}).catch(err => {
+			done(err);
 			throw err;
 		});
 	}

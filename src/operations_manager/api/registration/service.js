@@ -3,7 +3,7 @@
 
 const Joi = require('joi');
 const Store = require('../../../common/store/promise_store');
-const logger = require('../../../common/util').logger;
+//const logger = require('../../../common/util').logger;
 //const userService = require('userService');
 //const vehicleService = require('vehicleService');
 //const deviceService = require('deviceService');
@@ -49,7 +49,6 @@ module.exports = function RegistrationService() {
 		return Promise.resolve(id);
 	}
 	function _registration(reg) {
-		logger.info('Register new user');
 		return new Promise((resolve, reject) => {
 			Joi.validate(reg, registrationSchema, (err, value) => {
 				if (err) {

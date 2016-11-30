@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO This test suite meeds a big refactor to use be a unit test only
 
 const HOST = '127.0.0.1';
 const PORT = '1974';
@@ -83,5 +84,12 @@ describe('Close socket', () => {
 	it('Should close socket', () => {
 		client.destroy();
 		assert.isTrue(client.destroyed, 'Socket closed error');
+	});
+});
+describe('Stop server', () => {
+	it('Should stop server', (done) => {
+		sut.stop(10000, () => {
+			done(); //TODO add assert for server status
+		});
 	});
 });

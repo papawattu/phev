@@ -1,5 +1,4 @@
-import * as _Joi from 'joi';
-const Joi = _Joi.default;
+import * as Joi from 'joi';
 
 export const UserSchema = Joi.object().keys({
 	firstName: Joi.string().required(),

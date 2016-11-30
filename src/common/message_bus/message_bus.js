@@ -2,8 +2,10 @@ import EventEmitter from 'events';
 import uuid from 'uuid';
 import logger from '../logging';
 
+export const MessageTypes = Object.freeze({REQUEST : 'REQUEST',RESPONSE:'RESPONSE',ERROR: 'ERROR'});
+
 class Message {
-	constructor({topic='DEFAULT',type='REQUEST',command='NOOP',payload,correlation = false} = {}) {
+	constructor({topic='DEFAULT',type=MessageTypes.REQUEST,command='NOOP',payload,correlation = false} = {}) {
 		this.topic = topic;
 		this.type = type;
 		this.command = command;
@@ -12,7 +14,7 @@ class Message {
 		this.correlationId = (correlation?uuid():null);
 	}
 	static replyTo(message) {
-		const reply = new Message({topic : message.topic,type: 'REPLY', command: message.command});
+		const reply = new Message({topic : message.topic,type: MessageTypes.RESPONSE, command: message.command});
 		reply.correlationId = message.correlationId;
 		return reply;
 	}
@@ -41,7 +43,7 @@ class MessageBus extends EventEmitter {
 	}
 	sendMessage(message) {
 		super.emit(this.name, message);
-		return uuid();
+		return message.id;
 	}   
 	receiveMessages(topic,callback) {
 		super.on(this.name,(data) => {

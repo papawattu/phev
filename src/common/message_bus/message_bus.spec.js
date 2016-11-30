@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {MessageBus,Message} from './message_bus';
+import {MessageBus,Message,MessageTypes} from './message_bus';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);
@@ -34,7 +34,7 @@ describe('Messages', () => {
 		assert.equal(replyMessage.correlationId,message.correlationId);
 		assert.equal(replyMessage.topic,message.topic);
 		assert.equal(replyMessage.command,message.command);
-		assert.equal(replyMessage.type,'REPLY');
+		assert.equal(replyMessage.type,MessageTypes.RESPONSE);
 		assert.isUndefined(replyMessage.payload);
 	});
 });
@@ -56,6 +56,33 @@ describe('Message bus', () => {
 			done();
 		});
 		messageBus.sendMessage(message);
+	});
+	it('Should send and receive message id', (done) => {
+		const message = new Message({ topic :'topic',payload: 'Hello'});
+		let id = message.id;
+		messageBus.receiveMessages('topic',(data) => {
+			assert.equal(data.id,id);
+			done();
+		});
+		messageBus.sendMessage(message);
+	});
+	it('Should send and receive more than one message', (done) => {
+		const message = new Message({ topic :'topic',payload: 'Hello'});
+		const message2 = new Message({ topic :'topic',payload: 'Hello again'});
+		let num = 0;
+		messageBus.receiveMessages('topic',(data) => {
+			
+			if(num == 0) {
+				assert(data.payload === 'Hello' || data.payload === 'Hello again');
+				num++;
+			}
+			else {
+				assert(data.payload === 'Hello' || data.payload === 'Hello again');
+				done();
+			}
+		});
+		messageBus.sendMessage(message);
+		messageBus.sendMessage(message2);
 	});
 	it('Should send and not receive message when different topic', (done) => {
 		const message = new Message({ topic :'newtopic',payload: 'Hello'});
@@ -110,9 +137,9 @@ describe('Message bus', () => {
 		messageBus.sendMessage(message);
 	});
 	it('Should receive messages with multi filter', (done) => {
-		const message = new Message({ topic :'topic',command: 'NOOP', type: 'ERROR',payload: 'Hello'});
+		const message = new Message({ topic :'topic',command: 'NOOP', type: MessageTypes.ERROR,payload: 'Hello'});
 		
-		messageBus.receiveMessagesFilter('topic',{type: 'ERROR',command: 'NOOP'}, (data) => {
+		messageBus.receiveMessagesFilter('topic',{type: MessageTypes.ERROR,command: 'NOOP'}, (data) => {
 			assert.deepEqual(data,message,'Should get error type message but got this message : ' + data);
 			done();
 		});

@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('winston');
+import {logger} from '../../../common/logger';
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const Store = require('../../../common/store/promise_store');

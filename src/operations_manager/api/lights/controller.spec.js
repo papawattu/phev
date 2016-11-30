@@ -1,6 +1,6 @@
 'use strict';
 
-import {MessageBus} from '../../../common/message_bus'
+import {MessageBus} from '../../../common/message_bus';
 const HOST = 'localhost';
 const PROTOCOL = 'http';
 const PORT = '3000';

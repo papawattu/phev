@@ -1,16 +1,16 @@
 'use strict';
-import 'babel-polyfill';
-import { Logger } from 'winston';
-import { Message } from '../../common/message_bus';
+import { Topics } from '../../common/message_bus/topics';
+import { Message,MessageTypes } from '../../common/message_bus';
 import { Store } from '../../common/store/new_store_sync';
-
-
-const logger = new Logger();
-
-const USER_TOPIC = 'user';
+import { UserSchema } from '../../common/data/schema';
+import * as Joi from 'joi';
 
 class UserService {
-	constructor({messageBus} = {}) {
+	constructor({logger, messageBus, store = new Store()}) {
+
+		this.logger = logger;
+		this.messageBus = messageBus;
+		this.store = store;
 
 		this.commands = [{
 			name: 'GET',
@@ -21,11 +21,14 @@ class UserService {
 			numArgs: 1,
 			handle: this.addUser,
 		}];
-		this.messageBus = messageBus;
-		this.store = new Store();
 
-		messageBus.receiveMessagesFilter(USER_TOPIC, {type: 'REQUEST'},(message) => {
+		messageBus.receiveMessagesFilter(Topics.USER_TOPIC, {type: MessageTypes.REQUEST},(message) => {
 			const replyMessage = Message.replyTo(message);
+			Joi.validate(message.payload.user, UserSchema, (err) => {
+				if (err) {
+					throw err;
+				}
+			});
 			replyMessage.payload = 
 				this._findCommand(message.command)
 					.handle.call(this,message.payload);
@@ -42,18 +45,18 @@ class UserService {
 		//if (!this._isValidCommand(cmd)) throw new Error('Invalid command on bus ' + cmd);
 		return this._findCommand(cmd).handle(cmd, data);
 	}
-	getUser(userId) {
-		logger.debug('Call to get user userId ' + userId);
-		return (this.store.get(userId) != undefined?this.store.get(userId).value:undefined);
+	getUser(username) {
+		this.logger.debug('Call to get user username ' + username);
+		return (this.store.get(username) != undefined?this.store.get(username).value:undefined);
 	}
 	getUsers() {
-		logger.debug('Call to get users userId ');
+		this.logger.debug('Call to get users username ');
 		return this.store.getAll();
 	}
 	addUser(user) {
-		logger.debug('Call to register user ' + user);
-		if(this.store.has(user.userId)) throw new Error('User already exists ' + user.userId);
-		this.store.set(user.userId, user);
+		this.logger.debug('Call to register user ' + user);
+		if(this.store.has(user.user.username)) throw new Error('User already exists ' + user.user.username);
+		this.store.set(user.user.username, user);
 	}
 }
 

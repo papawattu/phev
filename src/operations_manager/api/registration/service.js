@@ -1,16 +1,13 @@
 'use strict';
-import {RegistrationSchema} from './schema';
+import {RegistrationSchema} from '../../../common/data/schema';
 const Joi = require('joi');
 const Store = require('../../../common/store/promise_store');
-//const logger = require('../../../common/util').logger;
-//const userService = require('userService');
-//const vehicleService = require('vehicleService');
-//const deviceService = require('deviceService');
 
 const RegNS = 'registration.';
 
-module.exports = function RegistrationService({logger,messageBus}) {
+module.exports = function RegistrationService({logger}) {
 
+	logger.info('Started registration service');
 	const store = new Store();
 
 	function _createUser(user) {

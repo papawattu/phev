@@ -1,5 +1,7 @@
 'use strict';
 
+import {MessageBus} from '../../../common/message_bus';
+
 const HOST = 'localhost';
 const PROTOCOL = 'http';
 const PORT = '3000';
@@ -9,7 +11,8 @@ const request = require('superagent');
 const status = require('http-status');
 const OperationsManagerHttpApi = require('../../../operations_manager');
 
-const opmgr = new OperationsManagerHttpApi(logger);
+const messageBus = new MessageBus();
+const opmgr = new OperationsManagerHttpApi({logger,messageBus});
 
 describe('Registration operations', () => {
 	before((done) => {

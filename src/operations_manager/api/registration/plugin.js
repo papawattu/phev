@@ -5,7 +5,7 @@ const RegistrationController = require('./controller');
 
 exports.registration = function (server, options, next) {
 
-	const _registrationController = new RegistrationController(options.logger);
+	const _registrationController = new RegistrationController({logger: options.logger,messageBus: options.messageBus});
 
 	server.route([{
 		method: 'POST',

@@ -1,5 +1,5 @@
 'use strict';
-
+import {MessageBus} from '../../../common/message_bus';
 const logger = require('../../../common/logging');
 const HOST = 'localhost';
 const PROTOCOL = 'http';
@@ -7,9 +7,10 @@ const PORT = '3000';
 const assert = require('chai').assert;
 const request = require('superagent');
 const status = require('http-status');
-const OpMgr = require('../../../operations_manager');
+const OperationsManagerHttpApi = require('../../../operations_manager');
 
-const opmgr = new OpMgr(logger);
+const messageBus = new MessageBus();
+const opmgr = new OperationsManagerHttpApi({logger,messageBus});
 
 describe('Status operations', () => {
 	before((done) => {

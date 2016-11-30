@@ -2,9 +2,9 @@
 
 const RegistrationService = require('./service');
 
-module.exports = function registrationController(logger) {
+module.exports = function registrationController({logger,messageBus}) {
     
-	const registrationService = new RegistrationService();
+	const registrationService = new RegistrationService({logger,messageBus});
 
 	function _registration(request,reply) {
 		logger.debug('Reguest registration ' + request.payload + ' request.payload ');

@@ -8,7 +8,7 @@ const VehicleMgr = require('./vehicle_manager/vehicle_manager');
 module.exports = function App() {
 
 	const messageBus = new MessageBus('main');
-	const opmgr = new OpManager();
+	const opmgr = new OpManager({logger,messageBus});
 	const vmgr = new VehicleMgr();
 
 	messageBus.start();

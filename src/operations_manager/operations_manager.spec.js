@@ -1,5 +1,6 @@
 'use strict';
 
+import { MessageBus } from '../common/message_bus/message_bus';
 const HOST = 'localhost';
 const PROTOCOL = 'http';
 const PORT = '3000';
@@ -9,7 +10,9 @@ const assert = require('chai').assert;
 const request = require('superagent');
 const OperationsManagerHttpApi = require('./operations_manager');
 
-const sut = new OperationsManagerHttpApi(logger);
+const messageBus = new MessageBus();
+
+const sut = new OperationsManagerHttpApi({logger, messageBus});
 
 describe('Operations Manager status', () => {
 	it('Should return service status as string', () => {
@@ -45,20 +48,20 @@ describe('Operations Manager listen on port', () => {
 		sut.start(done);
 	});
 	after((done) => {
-		sut.stop(60 * 10000,done);
+		sut.stop(60 * 10000, done);
 	});
-	it('Should be listening on port', (done)=> {
+	it('Should be listening on port', (done) => {
 		let uri = PROTOCOL + '://' + HOST + ':' + PORT + '/api/operations/status';
 		logger.debug('Connecting to ' + uri);
 		request.get(uri)
-            .type('application/json')
-            .accept('json')
-            .end(function (err, res) {
-	assert.ifError(err);
-	assert.equal(res.status, 200);
-	assert(res.status != 'undefined');
-	done();
-});
+			.type('application/json')
+			.accept('json')
+			.end(function (err, res) {
+				assert.ifError(err);
+				assert.equal(res.status, 200);
+				assert(res.status != 'undefined');
+				done();
+			});
 	});
 });
 

@@ -1,8 +1,8 @@
 'use strict';
-const _logger = require('../common/logging');
+
 const hapi = require('hapi');
 
-module.exports = function OperationsManagerHttpApi(logger) {
+module.exports = function OperationsManagerHttpApi({logger,messageBus}) {
 
 	const httpServer = new hapi.Server({
 		debug: {
@@ -12,7 +12,6 @@ module.exports = function OperationsManagerHttpApi(logger) {
 	});
 	let _status = 'STOPPED';
 	let pluginsRegistered = false;
-	logger = logger || _logger;
 
 	httpServer.connection({
 		port: process.env.SERVER_PORT || 3000,
@@ -24,18 +23,19 @@ module.exports = function OperationsManagerHttpApi(logger) {
 	}
 
 	function _registerPlugins() {
-		//if (pluginsRegistered) return;
 		logger.debug('Register plugins');
 		httpServer.register([{
 			register: require('./api/lights/').lights,
 			options: {
 				logger: logger,
+				messageBus: messageBus,
 			},
 		},
 		{
 			register: require('./api/registration').registration,
 			options: {
 				logger: logger,
+				messageBus: messageBus,
 			},
 		},
 		{

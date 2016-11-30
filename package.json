@@ -7,8 +7,8 @@
     "build": "babel src --out-dir lib --source-maps inline --copy-files",
     "start": "node index.js",
     "test": "npm run test-unit",
-    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --harmony --recursive ./src ./src/common/util.js",
-    "test-watch": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --watch --reporter dot --harmony --recursive ./src/ ./src/common/util.js",
+    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --recursive ./src ./src/common/util.js",
+    "test-watch": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --watch --reporter dot --recursive ./src ./src/common/util.js",
     "eslint": "./node_modules/.bin/eslint ./src --fix"
   },
   "repository": {

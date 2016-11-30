@@ -4,7 +4,7 @@
   "description": "Mitsubishi Outlander PHEV remote control application",
   "main": "index.js",
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "babel src --out-dir lib --source-maps inline --copy-files",
     "start": "node index.js",
     "test": "npm run test-unit",
     "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --harmony --recursive ./src ./src/common/util.js",

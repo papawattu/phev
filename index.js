@@ -1,5 +1,5 @@
 'use strict';
 
-const App = require('./lib');
+const App = require('./lib/app');
 
-var app = new App();
+const app = new App();

@@ -27,7 +27,7 @@ module.exports = function OperationsManagerHttpApi(logger) {
 		//if (pluginsRegistered) return;
 		logger.debug('Register plugins');
 		httpServer.register([{
-			register: require('./api/lights').lights,
+			register: require('./api/lights/').lights,
 			options: {
 				logger: logger,
 			},

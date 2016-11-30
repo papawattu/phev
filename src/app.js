@@ -1,8 +1,8 @@
 'use strict';
-const MessageBus = require('./common/message_bus').MessageBus;
+import {MessageBus} from './common/message_bus/message_bus';
 const logger = require('./common/logging');
-const OpManager = require('./operations_manager');
-const VehicleMgr = require('./vehicle_manager');
+const OpManager = require('./operations_manager/operations_manager');
+const VehicleMgr = require('./vehicle_manager/vehicle_manager');
 
 
 module.exports = function App() {

@@ -5,7 +5,9 @@ const winston = require('winston');
 winston.emitErrs = true;
 const _logger = new winston.Logger({
 	transports: [
-		new winston.transports.Console({
+		new winston.transports.File({
+			name: 'error',
+			filename: 'logs/app-info.log',
 			timestamp: true,
 			level: 'error',
 			handleExceptions: true,

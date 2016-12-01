@@ -2,12 +2,14 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {MessageBus,Message,MessageTypes,MessageBusStatus} from './message_bus';
+import {MessageBus,Message,MessageTypes,MessageBusStatus,MessageCommands} from './message_bus';
+import {Topics} from './topics';
+import { logger } from '../../common/logger';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);
 
-const messageBus = new MessageBus('test');
+const messageBus = new MessageBus({name: 'test'});
 
 describe('Messages', () => {
 
@@ -164,5 +166,19 @@ describe('Message bus', () => {
 	it('Should stop and be in stopped state', () => {
 		messageBus.stop();
 		assert.equal(messageBus.status,MessageBusStatus.Stopped);
+	});
+	it('Should stop messgage handler',() => {
+		messageBus.stop();
+		assert.equal(messageBus.status,MessageBusStatus.Stopped);
+	});
+	it('Should throw error when trying to send messgage when message handler has stopped',() => {
+		messageBus.stop();
+		assert.equal(messageBus.status,MessageBusStatus.Stopped,'Expected message bus to be in stopped state');
+		return assert.throws( (() => { messageBus.sendMessage(new Message());}),'Message bus not started cannot send or receive messages');
+	});
+	it('Should stop when system shutdown called',()=> {
+		const message = new Message({topic: Topics.SYSTEM,type: MessageTypes.Broadcast,command: MessageCommands.Shutdown});
+		assert.equal(messageBus.status,MessageBusStatus.Started);
+		messageBus.sendMessage(message);
 	});
 });

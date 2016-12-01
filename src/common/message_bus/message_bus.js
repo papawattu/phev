@@ -1,14 +1,14 @@
 import EventEmitter from 'events';
 import uuid from 'uuid';
-import logger from '../logging';
+import {logger} from '../logger';
 import {Topics} from './topics';
 
-export const MessageTypes = Object.freeze({Undefined: 'UNDEFINED',Request : 'REQUEST',Response:'RESPONSE','Error': 'ERROR'});
-export const MessageCommands = Object.freeze({NoOperation : 'NOOP',Get:'GET',Add: 'ADD', Delete: 'DELETE', List: 'LIST'});
+export const MessageTypes = Object.freeze({Broadcast: 'BROADCAST',Undefined: 'UNDEFINED',Request : 'REQUEST',Response:'RESPONSE','Error': 'ERROR'});
+export const MessageCommands = Object.freeze({NoOperation : 'NOOP',Get:'GET',Add: 'ADD', Delete: 'DELETE', List: 'LIST',Shutdown: 'SHUTDOWN'});
 export const MessageBusStatus = Object.freeze({Stopped: 'STOPPED',Started: 'STARTED'});
 
 export class Message {
-	constructor({topic=Topics.DEFAULT,type=MessageTypes.Request,command=MessageCommands.noOperation,payload=undefined,correlation = false}) {
+	constructor({topic=Topics.DEFAULT,type=MessageTypes.Request,command=MessageCommands.noOperation,payload=undefined,correlation = false} = {}) {
 		this.topic = topic;
 		this.type = type;
 		this.command = command;
@@ -26,7 +26,7 @@ export class Message {
 	}
 }
 export class MessageBus extends EventEmitter {
-	constructor(name = 'default') {
+	constructor({name = 'default'} = {}) {
 		super();
 		this.setMaxListeners(0);
 		this.status = MessageBusStatus.Stopped;
@@ -37,6 +37,11 @@ export class MessageBus extends EventEmitter {
     
 		this.name = name;
 
+	}
+	errorIfNotStarted() {
+		if(this.status === MessageBusStatus.Started) return;
+		logger.error('Message bus not started cannot send or receive messages');
+		throw new Error('Message bus not started cannot send or receive messages');
 	}
 	start() {
 		super.on(this.name, () => {
@@ -50,20 +55,24 @@ export class MessageBus extends EventEmitter {
 		logger.info(this.name + ': Message Bus Stopped');
 	}
 	sendMessage(message) {
+		this.errorIfNotStarted();
 		super.emit(this.name, message);
 		return message.id;
 	}   
 	receiveMessages(topic,callback) {
+		this.errorIfNotStarted();
 		super.on(this.name,(data) => {
 			if(data.topic === topic) callback(data);
 		});
 	}
 	receiveMessageWithUUID(topic,id,callback) {
+		this.errorIfNotStarted();
 		super.on(this.name,(data) => {
 			if(data.topic === topic && data.id === id) callback(data);
 		});
 	}
 	receiveMessagesFilter(topic,filter,callback) {
+		this.errorIfNotStarted();
 		super.on(this.name,(data) => {
 			if(data.topic === topic) {
 				const keys = Object.keys(filter);	

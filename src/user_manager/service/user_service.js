@@ -22,6 +22,8 @@ class UserService {
 			handle: this.addUser,
 		}];
 
+		this.messageBus.start();
+
 		messageBus.receiveMessagesFilter(Topics.USER_TOPIC, {type: MessageTypes.Request},(message) => {
 			const replyMessage = Message.replyTo(message);
 			Joi.validate(message.payload.user, UserSchema, (err) => {

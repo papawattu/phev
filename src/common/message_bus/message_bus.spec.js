@@ -4,7 +4,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {MessageBus,Message,MessageTypes,MessageBusStatus,MessageCommands} from './message_bus';
 import {Topics} from './topics';
-import { logger } from '../../common/logger';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);

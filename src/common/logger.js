@@ -32,7 +32,7 @@ export const logger = new winston.Logger({
 			colorize: true
 		})
 	],
-	exitOnError: true
+	exitOnError: false,
 });
 
 logger.stream = {

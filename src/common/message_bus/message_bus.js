@@ -43,11 +43,23 @@ export class MessageBus extends EventEmitter {
 		logger.error('Message bus not started cannot send or receive messages');
 		throw new Error('Message bus not started cannot send or receive messages');
 	}
+	handleSystemCommand(data) {
+		switch (data.command) {
+			case MessageCommands.Shutdown: {
+				this.stop(); 
+				break;
+			}
+		}
+	}
 	start() {
 		super.on(this.name, () => {
 			logger.info(this.name + ': Message Bus Started');
 		});
 		this.status = MessageBusStatus.Started;
+		this.receiveMessagesFilter(Topics.SYSTEM,{},(data) =>{
+			this.handleSystemCommand(data);
+		});
+		
 	}
 	stop() {
 		this.removeAllListeners();

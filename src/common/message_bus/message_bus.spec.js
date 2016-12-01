@@ -175,9 +175,13 @@ describe('Message bus', () => {
 		assert.equal(messageBus.status,MessageBusStatus.Stopped,'Expected message bus to be in stopped state');
 		return assert.throws( (() => { messageBus.sendMessage(new Message());}),'Message bus not started cannot send or receive messages');
 	});
-	it('Should stop when system shutdown called',()=> {
+	it('Should stop when system shutdown called',(done)=> {
 		const message = new Message({topic: Topics.SYSTEM,type: MessageTypes.Broadcast,command: MessageCommands.Shutdown});
 		assert.equal(messageBus.status,MessageBusStatus.Started);
 		messageBus.sendMessage(message);
+		setTimeout(()=>{
+			assert.equal(messageBus.status,MessageBusStatus.Stopped);
+			done();
+		},100);
 	});
 });

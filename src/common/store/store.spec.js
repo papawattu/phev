@@ -1,10 +1,11 @@
 'use strict';
 
-const assert = require('chai').assert;
-const chai = require('chai');
-const Store = require('./store');
-var chaiAsPromised = require('chai-as-promised');
-chai.use(chaiAsPromised);
+import chai from 'chai';
+import Store from './new_store_sync';
+import chaiAsPromised from 'chai-as-promised';
+
+const assert = chai.use(chaiAsPromised).assert;
+
 const store  = new Store();
 
 const TestObj = {
@@ -21,10 +22,12 @@ describe('Store set', () => {
 	it('should set value', () => {
 		const test = Object.create(TestObj).init('Jamie');
 		store.set('key',test);
+		assert.deepEqual(store.get('key'),test);
 	});
 	it('should set value twice', () => {
 		const test = Object.create(TestObj).init('Chris');
 		store.set('key',test);
+		assert.deepEqual(store.get('key'),test);
 	});
 });
 describe('Store get', () => {
@@ -32,8 +35,8 @@ describe('Store get', () => {
 		const test = Object.create(TestObj).init('Chris');
 		assert.deepEqual(store.get('key'), test);
 	});
-	it('should get null back when key not found', () => {
-		assert.equal(store.get('key2'), null);
+	it('should get undefined back when key not found', () => {
+		assert.equal(store.get('key2'), undefined);
 	});
 });
 describe('Store has', () => {

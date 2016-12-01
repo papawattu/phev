@@ -1,7 +1,7 @@
 'use strict';
 import { Topics } from '../../common/message_bus/topics';
-import { Message,MessageTypes } from '../../common/message_bus';
-import { Store } from '../../common/store/new_store_sync';
+import { Message,MessageTypes,MessageCommands } from '../../common/message_bus';
+import Store from '../../common/store/new_store_sync';
 import { UserSchema } from '../../common/data/schema';
 import * as Joi from 'joi';
 
@@ -13,16 +13,16 @@ class UserService {
 		this.store = store;
 
 		this.commands = [{
-			name: 'GET',
+			name: MessageCommands.Get,
 			numArgs: 1,
 			handle: this.getUser,
 		},{
-			name: 'ADD',
+			name: MessageCommands.Add,
 			numArgs: 1,
 			handle: this.addUser,
 		}];
 
-		messageBus.receiveMessagesFilter(Topics.USER_TOPIC, {type: MessageTypes.REQUEST},(message) => {
+		messageBus.receiveMessagesFilter(Topics.USER_TOPIC, {type: MessageTypes.Request},(message) => {
 			const replyMessage = Message.replyTo(message);
 			Joi.validate(message.payload.user, UserSchema, (err) => {
 				if (err) {
@@ -38,25 +38,18 @@ class UserService {
 	_findCommand(cmd) {
 		return this.commands.find(e => e.name === cmd);
 	}
-	_isValidCommand(cmd) {
-		return (this._findCommand(cmd) != undefined);
-	}
-	_handleCommand(cmd, data) {
-		//if (!this._isValidCommand(cmd)) throw new Error('Invalid command on bus ' + cmd);
-		return this._findCommand(cmd).handle(cmd, data);
-	}
 	getUser(username) {
 		this.logger.debug('Call to get user username ' + username);
-		return (this.store.get(username) != undefined?this.store.get(username).value:undefined);
+		return this.store.get(username);
 	}
 	getUsers() {
 		this.logger.debug('Call to get users username ');
 		return this.store.getAll();
 	}
 	addUser(user) {
-		this.logger.debug('Call to register user ' + user);
+		this.logger.debug('Call to add new user ' + user);
 		if(this.store.has(user.user.username)) throw new Error('User already exists ' + user.user.username);
-		this.store.set(user.user.username, user);
+		return this.store.set(user.user.username, user);
 	}
 }
 

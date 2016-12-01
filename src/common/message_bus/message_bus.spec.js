@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import {MessageBus,Message,MessageTypes} from './message_bus';
+import {MessageBus,Message,MessageTypes,MessageBusStatus} from './message_bus';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);
@@ -34,7 +34,7 @@ describe('Messages', () => {
 		assert.equal(replyMessage.correlationId,message.correlationId);
 		assert.equal(replyMessage.topic,message.topic);
 		assert.equal(replyMessage.command,message.command);
-		assert.equal(replyMessage.type,MessageTypes.RESPONSE);
+		assert.equal(replyMessage.type,MessageTypes.Response);
 		assert.isUndefined(replyMessage.payload);
 	});
 });
@@ -48,6 +48,9 @@ describe('Message bus', () => {
 	});
 	it('Should have "test" as event name', () => {
 		assert.equal(messageBus.name,'test');
+	});
+	it('Should be in started state', () => {
+		assert.equal(messageBus.status,MessageBusStatus.Started);
 	});
 	it('Should send and receive message', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello'});
@@ -127,9 +130,9 @@ describe('Message bus', () => {
 		});
 	});
 	it('Should receive messages with type filter', (done) => {
-		const message = new Message({ topic :'topic',type: 'ERROR',payload: 'Hello'});
+		const message = new Message({ topic :'topic',type: MessageTypes.Error,payload: 'Hello'});
 		
-		messageBus.receiveMessagesFilter('topic',{type: 'ERROR'}, (data) => {
+		messageBus.receiveMessagesFilter('topic',{type: MessageTypes.Error}, (data) => {
 			assert.deepEqual(data,message,'Should get error type message but got this message : ' + data);
 			done();
 		});
@@ -137,16 +140,16 @@ describe('Message bus', () => {
 		messageBus.sendMessage(message);
 	});
 	it('Should receive messages with multi filter', (done) => {
-		const message = new Message({ topic :'topic',command: 'NOOP', type: MessageTypes.ERROR,payload: 'Hello'});
+		const message = new Message({ topic :'topic',command: 'NOOP', type: MessageTypes.Error,payload: 'Hello'});
 		
-		messageBus.receiveMessagesFilter('topic',{type: MessageTypes.ERROR,command: 'NOOP'}, (data) => {
+		messageBus.receiveMessagesFilter('topic',{type: MessageTypes.Error,command: 'NOOP'}, (data) => {
 			assert.deepEqual(data,message,'Should get error type message but got this message : ' + data);
 			done();
 		});
 		
 		messageBus.sendMessage(message);
 	});
-	it('Should not receive messages with multi filter', (done) => {
+	it('Should not receive messages with multi filter "TYPE"', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello',correlation:true});
 		
 		messageBus.receiveMessagesFilter('topic',{command: 'NOOP',type: 'TYPE'}, (data) => {
@@ -157,5 +160,9 @@ describe('Message bus', () => {
 		process.nextTick(()=>{
 			done();
 		});
+	});
+	it('Should stop and be in stopped state', () => {
+		messageBus.stop();
+		assert.equal(messageBus.status,MessageBusStatus.Stopped);
 	});
 });

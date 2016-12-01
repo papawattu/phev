@@ -1,21 +1,22 @@
 'use strict';
 
-class Store {
+export default class Store {
 	constructor() {
-		this.elements = [];
+		this.elements = new Map();
 	}
 	getAll() {
-		return this.elements.map(e => e.value);
+		return this.elements.entries();
 	}
 	get(key) {
-		return this.elements.find(e => e.key === key);
+		return this.elements.get(key);
 	}
 	set(key,value) {
-		this.elements.push({key : key, value : value});
+		return this.elements.set(key,value);
 	}
 	has(key) {
-		return (this.get(key) != undefined);
+		return this.elements.has(key);
+	}
+	del(key) {
+		return this.elements.delete(key);
 	}
 }
-
-export {Store};

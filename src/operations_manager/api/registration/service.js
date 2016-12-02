@@ -1,46 +1,57 @@
-'use strict';
 import {RegistrationSchema} from '../../../common/data/schema';
-const Joi = require('joi');
-const Store = require('../../../common/store/promise_store');
+import { Topics } from '../../../common/message_bus/topics';
+import { Message,MessageTypes,MessageCommands } from '../../../common/message_bus';
+import * as Joi from 'joi';
+import { logger } from '../../../common/logger';
+import BaseService from '../../../common/base_service';
 
-const RegNS = 'registration.';
-
-module.exports = function RegistrationService({logger}) {
-
-	logger.info('Started registration service');
-	const store = new Store();
-
-	function _createUser(user) {
-		return store.has(RegNS + user.username).then((exists) => {
-			if (exists) {
-				throw new Error('User already registered ' + user.username);
-			}
-			return store.set(RegNS + user.username, user);
-		});
+export default class RegistrationService extends BaseService {
+	constructor({logger, messageBus}) {
+		
+		logger.info('Started registration service');
+		super({logger: logger,messageBus: messageBus});
 	}
-	function _createVehicle(vin) {
+	createUser(user) {
+		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: {user: user}, correlation: true });
+		const response = new Promise((resolve,reject) => {
+			this.messageBus.receiveMessageFilter(Topics.USER_TOPIC, { correlationId: message.correlationId,type: MessageTypes.Response }, (data) => {
+				if(data.error === null) {
+					resolve(data.payload);	
+				} else { 
+					logger.error(`create user error response : ${JSON.stringify(data.error)}`);
+					reject(data.error);
+				}
+			});
+		});
+		this.messageBus.sendMessage(message);
+		return response;
+	}
+	createVehicle(vin) {
 		return Promise.resolve(vin);
 	}
-	function _createDevice(id) {
+	createDevice(id) {
 		return Promise.resolve(id);
 	}
-	function _registration(reg) {
+	registration(reg) {
 		return new Promise((resolve, reject) => {
 			Joi.validate(reg, RegistrationSchema, (err, value) => {
 				if (err) {
-					return reject(err);
+					logger.error('Validation rejected ' + JSON.stringify(value));
+					reject(err);
+				} else {
+					resolve(value);
 				}
-				return resolve(value);
 			});
 		}).then(() => {
-			return Promise.all([
-				_createUser(reg.register.user),
-				_createVehicle(reg.register.vehicle),
-				_createDevice(reg.register.device),
-			]);
+			return Promise.all([this.createUser(reg.register.user)])
+				.then(() => {
+					return {balls: true};
+				})
+				.catch((err) => {
+					return err;
+				});
+		}).catch((err) => {
+			return err;
 		});
 	}
-	return {
-		registration: _registration,
-	};
-};
+}

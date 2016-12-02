@@ -1,6 +1,6 @@
 'use strict';
 
-const RegistrationService = require('./service');
+import RegistrationService from './service';
 
 module.exports = function registrationController({logger,messageBus}) {
     
@@ -9,9 +9,10 @@ module.exports = function registrationController({logger,messageBus}) {
 	function _registration(request,reply) {
 		logger.debug('Reguest registration ' + request.payload + ' request.payload ');
 		registrationService.registration(request.payload).then(() => {
-			return reply({status : 'ok'}).created('/users/' + request.payload.register.user.username);
+			reply({status : 'ok'}).created('/users/' + request.payload.register.user.username);
 		}).catch((err) => {
-			return reply({status : 'error',error : err}).status(400);
+			logger.error('Registration controller error ' + err);
+			reply({status : 'error',error : err}).code(400);
 		});
 	}
 	return {

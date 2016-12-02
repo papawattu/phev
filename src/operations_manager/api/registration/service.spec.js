@@ -1,91 +1,49 @@
 'use strict';
 
-import {logger} from '../../../common/logger';
+import { logger } from '../../../common/logger';
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const Store = require('../../../common/store/promise_store');
 const assert = chai.assert;
-const RegistrationService = require('./service');
+import RegistrationService from './service';
+import { MessageBus, Message, MessageTypes, MessageCommands } from '../../../common/message_bus/message_bus';
+import { register, register2 } from '../../../common/data/data';
+import { Topics } from '../../../common/message_bus/topics';
 
-const sut = new RegistrationService({ store: new Store, logger: logger });
+const messageBus = new MessageBus({ logger: logger });
+const sut = new RegistrationService({ logger: logger, messageBus: messageBus });
 
 chai.use(chaiAsPromised);
-
-const register = {
-	register: {
-		user: {
-			firstName: 'Jamie',
-			lastName: 'Nuttall',
-			username: 'papawattu',
-			password: 'Pa55word!',
-			email: 'jamie@me.com',
-		},
-		vehicle: {
-			ssid: 'REMOTE123456',
-			password: 'qwertyuiop',
-			vin: 'VIN1234',
-		},
-		device: {
-			id: '12345',
-		}
-	}
-};
-const register2 = {
-	register: {
-		user: {
-			firstName: 'Jamie',
-			lastName: 'Nuttall',
-			username: 'papawattu2',
-			password: 'Pa55word!',
-			email: 'jamie2@me.com',
-		},
-		vehicle: {
-			ssid: 'REMOTE123456',
-			password: 'qwertyuiop',
-			vin: 'VIN1234',
-		},
-		device: {
-			id: '12345',
-		}
-	}
-};
-
-const register3 = {
-	register: {
-		user: {
-			lastName: 'Nuttall',
-			username: 'papawattu2',
-			password: 'Pa55word!',
-			email: 'jamie2@me.com',
-		},
-		vehicle: {
-			ssid: 'REMOTE123456',
-			password: 'qwertyuiop',
-			vin: 'VIN1234',
-		},
-		device: {
-			id: '12345',
-		}
-	}
-};
 
 describe('Registration service', () => {
 
 	before(() => {
-
+		messageBus.start();
+	});
+	after(() => {
+		messageBus.stop();
 	});
 	it('Should register user', () => {
+		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
 		return assert.isFulfilled(sut.registration(register));
-
 	});
 	it('Should register another user', () => {
+		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
 		return assert.isFulfilled(sut.registration(register2));
 
 	});
 	it('Should not allow same username to be registered twice', () => {
-		return assert.isRejected(sut.registration(register));
+		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			const message = Message.replyTo(data);
+			message.error = { code: 500, description: 'An error' };
+			messageBus.sendMessage(message);
+		});
+		return assert.isRejected(sut.createUser({ user: register.user }));
 	});
 	it('Should not allow invalid payload', () => {
-		return assert.isRejected(sut.registration(register3));
+		return assert.eventually.propertyVal(sut.registration({ 123: 123 }), 'isJoi', true);
 	});
 });

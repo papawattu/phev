@@ -1,3 +1,5 @@
-import App from './lib/app';
+'use strict';
 
-new App();
+const App = require('./lib/app').default;
+
+const app = new App();

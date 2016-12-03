@@ -9,7 +9,7 @@ export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger }),
 		operationsManager = new OperationsManager({ logger, messageBus }),
-		vehicleManager = new VehicleManager({ logger, messageBus }) }) {
+		vehicleManager = new VehicleManager({ logger, messageBus }) }= {}) {
 
 		this.messageBus = messageBus;
 		this.logger = logger;

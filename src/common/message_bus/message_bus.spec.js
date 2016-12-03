@@ -166,10 +166,10 @@ describe('Message bus', () => {
 		});
 		messageBus.sendMessage(message);
 		messageBus.sendMessage(message2);
-		setTimeout(()=> {
+		process.nextTick(()=> {
 			assert.equal(finished,2);
 			done();
-		},1000);
+		});
 	}); 
 	it('Should not receive messages with multiple filters with "DONTGETME" as type', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello',correlation:true});
@@ -203,6 +203,6 @@ describe('Message bus', () => {
 		setTimeout(()=>{
 			assert.equal(messageBus.status,MessageBusStatus.Stopped);
 			done();
-		},100);
+		},10);
 	}); 
 }); 

@@ -56,9 +56,9 @@ export default class RegistrationService extends BaseService {
 			});
 		}).then(() => {
 			return Promise.all([
-					this.createUser(reg.register.user),
-					this.createVehicle(reg.register.vehicle)
-				])
+				this.createUser(reg.register.user),
+				this.createVehicle(reg.register.vehicle)
+			])
 				.then(() => {
 					return;
 				})

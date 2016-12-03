@@ -1,10 +1,6 @@
-import { MessageBus, Message, MessageTypes, MessageCommands } from './common/message_bus/message_bus';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { logger } from './common/logger';
 import sinon from 'sinon';
-import OperationsManagerHttpApi from './operations_manager/operations_manager';
-import VehicleManager from './vehicle_manager/vehicle_manager';
 
 import App from './app';
 

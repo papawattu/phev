@@ -1,6 +1,5 @@
 'use strict';
 const UserService = require('../service/user_service');
-const Logger = require('../../common/util').logger;
 const Boom = require('boom');	
 
 module.exports = function UserManagerApiController({logger,messageBus}) {

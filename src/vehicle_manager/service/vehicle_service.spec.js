@@ -2,9 +2,8 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import VehicleService from './vehicle_service';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../../common/message_bus';
+import { MessageBus } from '../../common/message_bus';
 import { logger } from '../../common/logger';
-import { Topics } from '../../common/message_bus/topics';
 import { Vehicle,Vehicle2 } from '../../common/data/data';
 
 const assert = chai.use(chaiAsPromised).assert;
@@ -34,12 +33,6 @@ describe('Vehicle service get vin', () => {
 		return assert.deepEqual(sut.getVehicle(Vehicle.vehicle.vin), Vehicle);
 	});
 	it('Should not get vehicle for non registered VIN', () => {
-		return assert.isUndefined(sut.getVehicle('123456'), 'Expected reyurn value t be undefined is ' + sut.getVehicle('123456'));
-	});
-	it.skip('Should get all vehicles', () => {
-		return assert.becomes(sut.getVehicles(), { '123456789': { vin: '123456789' }, '123456789abcdef': { vin: '123456789abcdef' } });
-	});
-	it.skip('Should get vehicles by device Id', () => {
-		return assert.becomes(sut.getVehicleByDeviceId('1234'), { '123456789': { vin: '123456789' }, '123456789abcdef': { vin: '123456789abcdef' } });
+		return assert.isUndefined(sut.getVehicle('123456'), 'Expected return value to be undefined is ' + sut.getVehicle('123456'));
 	});
 });

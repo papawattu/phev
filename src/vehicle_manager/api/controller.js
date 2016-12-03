@@ -1,6 +1,4 @@
-'use strict';
 import VehicleService from '../service/vehicle_service';
-const Boom = require('boom');	
 
 module.exports = function VehicleManagerApiController({logger,messageBus}) {
 	

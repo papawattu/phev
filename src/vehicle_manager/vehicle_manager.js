@@ -7,7 +7,6 @@ const net = require('net');
 const hapi = require('hapi');
 
 const CRLF = '\r\n';
-const logger = require('../common/util').logger;
 const eol = require('../common/util').eol;
 const VehicleCommandHandler = require('./command_handler');
 

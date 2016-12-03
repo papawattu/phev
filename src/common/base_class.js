@@ -1,5 +1,5 @@
 export default class BaseClass {
-    constructor({logger = {}}) {
-        this.logger = logger;
-    }
+	constructor({logger = {}}) {
+		this.logger = logger;
+	}
 }

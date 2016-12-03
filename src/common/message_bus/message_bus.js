@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
 import uuid from 'uuid';
 import BaseClass from '../base_class';
-import { logger } from '../logger';
 import { Topics } from './topics';
 
 export const MessageTypes = Object.freeze({ Broadcast: 'BROADCAST', Undefined: 'UNDEFINED', Request: 'REQUEST', Response: 'RESPONSE', 'Error': 'ERROR' });
@@ -65,7 +64,7 @@ export class MessageBus extends BaseClass {
 			this.handleSystemCommand(data);
 		});
 		this.eventEmitter.on(this.name, (data) => {
-			this.subscribers.forEach((e,idx) => {
+			this.subscribers.forEach((e) => {
 				if((e.topic === data.topic) && (this.filter(e.filter,data))) {
 					e.callback(data);
 				}
@@ -73,7 +72,7 @@ export class MessageBus extends BaseClass {
 		});
 		this.eventEmitter.on(this.name, (data) => {
 			this.listeners.forEach((e,idx) => {
-					if((e.topic === data.topic) && (this.filter(e.filter,data))) {
+				if((e.topic === data.topic) && (this.filter(e.filter,data))) {
 					this.listeners.splice(idx,1);
 					e.callback(data);
 				}

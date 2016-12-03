@@ -4,7 +4,7 @@
 
 const HOST = '127.0.0.1';
 const PORT = '1974';
-const logger = require('winston');
+import { logger } from '../common/logger';
 const eol = require('../common/util').eol;
 const assert = require('chai').assert;
 const net = require('net');

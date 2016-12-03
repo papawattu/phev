@@ -88,11 +88,11 @@ export const Vehicle = {
 		password: 'qwertyuiop',
 		vin: 'VIN1234',
 	},
-}
+};
 export const Vehicle2 = {
 	vehicle: {
 		ssid: 'REMOTE123456',
 		password: 'qwertyuiop',
 		vin: 'VIN5678',
 	},
-}
+};

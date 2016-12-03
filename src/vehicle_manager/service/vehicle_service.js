@@ -1,5 +1,5 @@
 import { Topics } from '../../common/message_bus/topics';
-import { Message, MessageTypes, MessageCommands } from '../../common/message_bus';
+import { MessageTypes, MessageCommands } from '../../common/message_bus';
 import Store from '../../common/store/new_store_sync';
 import { VehicleSchema } from '../../common/data/schema';
 import BaseService from '../../common/base_service';

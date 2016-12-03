@@ -1,5 +1,3 @@
-'use strict';
+import App from './lib/app';
 
-const App = require('./lib/app');
-
-const app = new App();
+new App();

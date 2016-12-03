@@ -1,3 +1,2 @@
 #mocha.opts
 --recursive
---require lib/common/helpers.js

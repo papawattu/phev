@@ -8,7 +8,7 @@ import { Topics } from '../../common/message_bus/topics';
 import { Vehicle,Vehicle2 } from '../../common/data/data';
 
 const assert = chai.use(chaiAsPromised).assert;
-const messageBus = new MessageBus();
+const messageBus = new MessageBus({logger});
 messageBus.start();
 const sut = new VehicleService({ logger: logger, messageBus: messageBus });
 

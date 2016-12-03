@@ -1,4 +1,5 @@
 import BaseClass from './base_class';
+import { Message } from './message_bus/message_bus';
 import * as Joi from 'joi';
 
 export default class BaseService extends BaseClass {
@@ -17,7 +18,7 @@ export default class BaseService extends BaseClass {
 						commands.find(e => e.name === message.command)
 							.handle.call(this, message.payload);
 				}
-				messageBus.sendMessage(replyMessage);
+				this.messageBus.sendMessage(replyMessage);
 			});
 		});
 	}

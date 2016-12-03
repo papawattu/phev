@@ -4,11 +4,12 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {MessageBus,Message,MessageTypes,MessageBusStatus,MessageCommands} from './message_bus';
 import {Topics} from './topics';
+import {logger} from '../logger';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);
 
-const messageBus = new MessageBus({name: 'test'});
+const messageBus = new MessageBus({name: 'test',logger: logger});
 
 describe('Messages', () => {
 
@@ -46,7 +47,7 @@ describe('Message bus', () => {
 	});
 	afterEach(() => {
 		messageBus.stop();
-	});
+	}); 
 	it('Should have "test" as event name', () => {
 		assert.equal(messageBus.name,'test');
 	});
@@ -60,7 +61,7 @@ describe('Message bus', () => {
 			done();
 		});
 		messageBus.sendMessage(message);
-	});
+	}); 
 	it('Should send and receive message id', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello'});
 		let id = message.id;
@@ -149,7 +150,27 @@ describe('Message bus', () => {
 		});
 		
 		messageBus.sendMessage(message);
-	});
+	}); 
+	it('Should support multiple receiveMessageFilters', (done) => {
+		const message = new Message({ topic :'topic',command: 'NOOP', type: MessageTypes.Request,payload: 'Hello',correlation:true});
+		const message2 = new Message({ topic :'topic2',command: 'NOOP', type: MessageTypes.Request,payload: 'Hello Again',correlation:true});
+		let finished = 0;
+
+		messageBus.receiveMessageFilter('topic',{}, (data) => {
+			assert.deepEqual(data,message,'Should get error type message but got this message : ' + data);
+			finished ++;
+		});
+		messageBus.receiveMessageFilter('topic2',{}, (data) => {
+			assert.deepEqual(data,message2,'Should get error type message but got this message : ' + data);
+			finished ++;
+		});
+		messageBus.sendMessage(message);
+		messageBus.sendMessage(message2);
+		setTimeout(()=> {
+			assert.equal(finished,2);
+			done();
+		},1000);
+	}); 
 	it('Should not receive messages with multiple filters with "DONTGETME" as type', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello',correlation:true});
 		
@@ -183,5 +204,5 @@ describe('Message bus', () => {
 			assert.equal(messageBus.status,MessageBusStatus.Stopped);
 			done();
 		},100);
-	});
-});
+	}); 
+}); 

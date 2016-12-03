@@ -26,8 +26,20 @@ export default class RegistrationService extends BaseService {
 		this.messageBus.sendMessage(message);
 		return response;
 	}
-	createVehicle(vin) {
-		return Promise.resolve(vin);
+	createVehicle(vehicle) {
+		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: {vehicle: vehicle}, correlation: true });
+		const response = new Promise((resolve,reject) => {
+			this.messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId,type: MessageTypes.Response }, (data) => {
+				if(data.error === null) {
+					resolve(data.payload);	
+				} else { 
+					logger.error(`create vehicle error response : ${JSON.stringify(data.error)}`);
+					reject(data.error);
+				}
+			});
+		});
+		this.messageBus.sendMessage(message);
+		return response;
 	}
 	createDevice(id) {
 		return Promise.resolve(id);
@@ -43,9 +55,12 @@ export default class RegistrationService extends BaseService {
 				}
 			});
 		}).then(() => {
-			return Promise.all([this.createUser(reg.register.user)])
+			return Promise.all([
+					this.createUser(reg.register.user),
+					this.createVehicle(reg.register.vehicle)
+				])
 				.then(() => {
-					return {balls: true};
+					return;
 				})
 				.catch((err) => {
 					return err;

@@ -11,32 +11,16 @@ export default class UserService extends BaseService {
 		
 		this.store = store;
 
-		this.commands = [{
-			name: MessageCommands.Get,
-			numArgs: 1,
-			handle: this.getUser,
-		},{
-			name: MessageCommands.Add,
-			numArgs: 1,
-			handle: this.addUser,
-		}];
-
-		messageBus.subscribe(Topics.USER_TOPIC, {type: MessageTypes.Request},(message) => {
-			const replyMessage = Message.replyTo(message);
-			Joi.validate(message.payload.user, UserSchema, (err) => {
-				if(err) {
-					replyMessage.error = err;
-				} else {
-					replyMessage.payload = 
-						this._findCommand(message.command)
-							.handle.call(this,message.payload);
-				}
-				messageBus.sendMessage(replyMessage);
-			});
-		});
-	}
-	_findCommand(cmd) {
-		return this.commands.find(e => e.name === cmd);
+		this.registerMessageHandler(Topics.USER_TOPIC, UserSchema, { type: MessageTypes.Request }, 
+			[{
+				name: MessageCommands.Get,
+				numArgs: 1,
+				handle: this.getUser,
+			}, {
+				name: MessageCommands.Add,
+				numArgs: 1,
+				handle: this.addUser,
+			}]);
 	}
 	getUser(username) {
 		this.logger.debug('Call to get user username ' + username);

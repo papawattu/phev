@@ -11,7 +11,7 @@ const request = require('superagent');
 const status = require('http-status');
 const OperationsManagerHttpApi = require('../../../operations_manager');
 
-const messageBus = new MessageBus();
+const messageBus = new MessageBus({logger});
 messageBus.start();
 const opmgr = new OperationsManagerHttpApi({logger,messageBus});
 

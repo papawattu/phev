@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import uuid from 'uuid';
+import BaseClass from '../base_class';
 import { logger } from '../logger';
 import { Topics } from './topics';
 
@@ -26,22 +27,24 @@ export class Message {
 		return JSON.stringify(this);
 	}
 }
-export class MessageBus extends EventEmitter {
+export class MessageBus extends BaseClass {
 	constructor({name = 'default', logger = logger} = {}) {
-		super();
-		this.setMaxListeners(0);
-		this.status = MessageBusStatus.Stopped;
-		super.on('error', (err) => {
-			logger.error('Whoops! there was an error in the Message Bus : ' + err);
-			throw err;
-		});
+		super({logger: logger});
 
 		this.name = name;
-
+		this.eventEmitter = new EventEmitter();
+		this.eventEmitter.setMaxListeners(0);
+		this.status = MessageBusStatus.Stopped;
+		this.listeners = [];
+		this.subscribers = [];
+		this.eventEmitter.on('error', (err) => {
+			this.logger.error('Whoops! there was an error in the Message Bus : ' + err);
+			throw err;
+		});
 	}
 	errorIfNotStarted() {
 		if (this.status === MessageBusStatus.Started) return;
-		logger.error('Message bus not started cannot send or receive messages');
+		this.logger.error('Message bus not started cannot send or receive messages');
 		throw new Error('Message bus not started cannot send or receive messages');
 	}
 	handleSystemCommand(data) {
@@ -53,38 +56,59 @@ export class MessageBus extends EventEmitter {
 		}
 	}
 	start() {
-		super.on(this.name, () => {
-			logger.info(this.name + ': Message Bus Started');
+		this.eventEmitter.on(this.name, (message) => {
+			this.logger.debug('*** ' + JSON.stringify(message));
 		});
+
 		this.status = MessageBusStatus.Started;
 		this.subscribe(Topics.SYSTEM, {}, (data) => {
 			this.handleSystemCommand(data);
 		});
+		this.eventEmitter.on(this.name, (data) => {
+			this.subscribers.forEach((e,idx) => {
+				if((e.topic === data.topic) && (this.filter(e.filter,data))) {
+					e.callback(data);
+				}
+			});
+		});
+		this.eventEmitter.on(this.name, (data) => {
+			this.listeners.forEach((e,idx) => {
+					if((e.topic === data.topic) && (this.filter(e.filter,data))) {
+					this.listeners.splice(idx,1);
+					e.callback(data);
+				}
+			});
+		});
+		this.logger.info(this.name + ': Message Bus Started');
 	}
 	stop() {
-		this.removeAllListeners();
+		this.eventEmitter.removeAllListeners();
+		this.subscribers = [];
+		this.listeners  = [];
 		this.status = MessageBusStatus.Stopped;
-		logger.info(this.name + ': Message Bus Stopped');
+		this.logger.info(this.name + ': Message Bus Stopped');
 	}
 	sendMessage(message) {
 		this.errorIfNotStarted();
-		super.emit(this.name, message);
+		this.logger.debug('MESSAGE BUS : sendMessage ' + message);
+		this.eventEmitter.emit(this.name, message);
 		return message.id;
 	}
 	subscribe(topic, f, callback) {
 		this.errorIfNotStarted();
-		super.on(this.name, (data) => {
-			if (data.topic === topic) this.filter(f,data,callback);
-		});
+		
+		this.subscribers.push({topic: topic, filter: f, callback: callback});
 	}
-	filter(f,data,callback) {
+	filter(f,data) {
 		const keys = Object.keys(f);
-		if (keys.every((e) => data[e] === f[e])) callback(data);
+		return (keys.every((e) => data[e] === f[e]));
 	}
 	receiveMessageFilter(topic, f, callback) {
 		this.errorIfNotStarted();
-		super.once(this.name, (data) => {
-			if (data.topic === topic) this.filter(f,data,callback);
-		});
+		
+		this.logger.debug('MESSAGE BUS : receiveMessageFilter topic ' + topic + ' filter ' + JSON.stringify(f) + ' Calling callback');
+		
+		this.listeners.push({topic: topic, filter: f, callback: callback});
+		
 	}
 }

@@ -1,65 +1,67 @@
 'use strict';
-import {MessageBus,Message,MessageTypes,MessageCommands} from './common/message_bus/message_bus';
-import {Topics} from './common/message_bus/topics';
-import {logger} from './common/logger';
+import { MessageBus, Message, MessageTypes, MessageCommands } from './common/message_bus/message_bus';
+import { Topics } from './common/message_bus/topics';
+import { logger } from './common/logger';
+import OperationsManager from './operations_manager/operations_manager';
+import VehicleManager from './vehicle_manager/vehicle_manager';
 
-const OpManager = require('./operations_manager/operations_manager');
-const VehicleMgr = require('./vehicle_manager/vehicle_manager');
+export default class App {
+	constructor({
+		messageBus = new MessageBus({ logger }),
+		operationsManager = new OperationsManager({ logger, messageBus }),
+		vehicleManager = new VehicleManager({ logger, messageBus }) }) {
 
+		this.messageBus = messageBus;
+		this.logger = logger;
+		this.vehicleManager = vehicleManager;
+		this.operationsManager = operationsManager;
 
-module.exports = function App() {
+		this.messageBus.start();
 
-	const messageBus = new MessageBus('main');
-	const opmgr = new OpManager({logger,messageBus});
-	const vmgr = new VehicleMgr();
-
-	messageBus.start();
-
-	process.on('exit', () => {
-		logger.info('Exit - Stopping application');
-		_stop(10000 * 20, () => {
-			logger.info('Application stopped');
-			process.exit(0);
+		process.on('exit', () => {
+			this.logger.info('Exit - Stopping application');
+			this.stop(10000 * 20, () => {
+				this.logger.info('Application stopped');
+				process.exit(0);
+			});
 		});
-	});
-	try {
-		opmgr.start(() => {
-			logger.info('Started Operations Manager service.');
-		});
-		vmgr.start(() => {
-			logger.info('Started Vehicle Manager service.');
-		});
-	} catch (err) {
-		throw err;
+		try {
+			this.operationsManager.start(() => {
+				this.logger.info('Started Operations Manager service.');
+			});
+			this.vehicleManager.start(() => {
+				this.logger.info('Started Vehicle Manager service.');
+			});
+		} catch (err) {
+			throw err;
+		}
 	}
-	function _stop(timeout, done) {
-		const message = new Message({topic: Topics.SYSTEM,type: MessageTypes.Broadcast,command: MessageCommands.Shutdown});
+	stop(timeout, done) {
+		const message = new Message({ topic: Topics.SYSTEM, type: MessageTypes.Broadcast, command: MessageCommands.Shutdown });
+
+		this.logger.info('Stopping services');
+
+		this.messageBus.sendMessage(message);
+
+		this.messageBus.stop();
 		
-		logger.info('Stopping services');
-		
-		messageBus.sendMessage(message);
-		
-		opmgr.stop({ timeout: timeout }, (err) => {
+		this.operationsManager.stop({ timeout: timeout }, (err) => {
 			if (err) {
-				logger.error('Operations Manager Server failed to stop ' + err);
+				this.logger.error('Operations Manager Server failed to stop ' + err);
 				done(err);
 			}
-			logger.info('Operations Manager Server stopped');
+			this.logger.info('Operations Manager Server stopped');
 		});
-		vmgr.stop({ timeout: timeout }, (err) => {
+		this.vehicleManager.stop({ timeout: timeout }, (err) => {
 			if (err) {
-				logger.error('Vehicle Manager Server failed to stop ' + err);
+				this.logger.error('Vehicle Manager Server failed to stop ' + err);
 				done(err);
 			}
-			logger.info('Vehicle Manager Server stopped');
+			this.logger.info('Vehicle Manager Server stopped');
 			done();
 		});
 	}
-
-	return {
-		stop: _stop,
-		status: () => {
-			return [];
-		}
-	};
-};
+	status() {
+		return [];
+	}
+}

@@ -12,7 +12,7 @@ export const register = {
 			password: 'qwertyuiop',
 			vin: 'VIN1234',
 		},
-		device: {
+		dongle: {
 			id: '12345',
 		}
 	}
@@ -31,7 +31,7 @@ export const register2 = {
 			password: 'qwertyuiop',
 			vin: 'VIN1234',
 		},
-		device: {
+		dongle: {
 			id: '12345',
 		}
 	}
@@ -63,3 +63,17 @@ export const User3 = {
 		email: 'jamie@me.com',
 	}
 };
+export const Vehicle = {
+	vehicle: {
+		ssid: 'REMOTE123456',
+		password: 'qwertyuiop',
+		vin: 'VIN1234',
+	},
+}
+export const Vehicle2 = {
+	vehicle: {
+		ssid: 'REMOTE123456',
+		password: 'qwertyuiop',
+		vin: 'VIN5678',
+	},
+}

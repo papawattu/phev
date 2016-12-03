@@ -12,13 +12,13 @@ export const VehicleSchema = Joi.object().keys({
 	password: Joi.string().required(),
 	vin: Joi.string().required(),
 });
-export const DeviceSchema = Joi.object().keys({
+export const DongleSchema = Joi.object().keys({
 	id: Joi.string().required(),
 });
 export const RegistrationSchema = Joi.object().keys({
 	register: Joi.object().keys({
 		user: UserSchema,
 		vehicle: VehicleSchema,
-		device: DeviceSchema,
+		dongle: DongleSchema,
 	})
 });

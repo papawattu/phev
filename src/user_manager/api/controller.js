@@ -3,11 +3,10 @@ const UserService = require('../service/user_service');
 const Logger = require('../../common/util').logger;
 const Boom = require('boom');	
 
-module.exports = function UserManagerApiController() {
+module.exports = function UserManagerApiController({logger,messageBus}) {
 	
-	const userService = new UserService();
-	const logger = Logger;
-
+	const userService = new UserService({logger,messageBus});
+	
 	function _getUser(request,reply) {
 		logger.debug('Call to get user ' + request.params.userId + ' request.params.userId ');
 		return userService.getUser(request.params.userId).then((done) => {

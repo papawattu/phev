@@ -4,7 +4,7 @@ const VehicleManagerApiController = require('./controller');
 
 exports.VehicleManagerApiPlugin = function (server, options, next) {
 
-	const _vehicleManagerApiController = new VehicleManagerApiController(options.logger);
+	const _vehicleManagerApiController = new VehicleManagerApiController({logger: options.logger, messageBus : options.messageBus});
 
 	server.route([{
 		method: 'GET',

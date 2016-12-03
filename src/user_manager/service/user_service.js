@@ -1,4 +1,3 @@
-'use strict';
 import { Topics } from '../../common/message_bus/topics';
 import { Message,MessageTypes,MessageCommands } from '../../common/message_bus';
 import Store from '../../common/store/new_store_sync';
@@ -44,7 +43,7 @@ export default class UserService extends BaseService {
 		return this.store.get(username);
 	}
 	getUsers(filter) {
-		this.logger.debug('Call to get users username ');
+		this.logger.debug('Call to get users');
 		return this.store.getAll(filter);
 	}
 	addUser(user) {
@@ -59,6 +58,6 @@ export default class UserService extends BaseService {
 			throw new Error('User already exists ' + user.user.username);
 		} 
 		this.store.set(user.user.username, user);
-		return {status: 'ok'};
+		return;
 	}
 }

@@ -1,26 +1,28 @@
 'use strict';
-const VehicleService = require('../service/vehicle_service');
-const Logger = require('../../common/util').logger;
+import VehicleService from '../service/vehicle_service';
 const Boom = require('boom');	
 
-module.exports = function VehicleManagerApiController() {
+module.exports = function VehicleManagerApiController({logger,messageBus}) {
 	
-	const vehicleService = new VehicleService();
-	const logger = Logger;
+	const vehicleService = new VehicleService({logger,messageBus});
 
 	function _getVehicle(request,reply) {
 		logger.debug('Call to get vehicle ' + request.params.vin + ' request.params.vin ');
-		return vehicleService.getVehicle(request.params.vin).then((done) => {
-			if(done) {
-				return reply(done).code(200);
-			}
-			return reply(Boom.badRequest(''));	
-		});
+		const vehicle = vehicleService.getVehicle(request.params.vin);
+		if(vehicle != undefined) {
+			reply(vehicle).code(200);
+		} else {
+			reply({status: '\"Not Found\"'}).code(404);
+		}
+		//reply(Boom.badRequest(' ' + vehicle));	
 	}
 	function _registerVehicle(request,reply) {
-		return vehicleService.addVehicle(request.payload.vehicle).then(() => {
+		try {
+			vehicleService.addVehicle(request.payload.vehicle);
 			return reply({}).created('/vehicleManger/vehicles/' + request.payload.vehicle.vin);
-		});
+		} catch(err) {
+			throw err;
+		}
 	}
 	return {
 		getVehicle : _getVehicle,

@@ -38,10 +38,10 @@ describe('Registration service', () => {
 	it('Should not allow same username to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			const message = Message.replyTo(data);
-			message.error = { code: 500, description: 'An error' };
+			message.error = { code: 500, description: 'Username already registered' };
 			messageBus.sendMessage(message);
 		});
-		return assert.isRejected(sut.createUser({ user: register.user }));
+		return assert.eventually.deepEqual(sut.registration(register),{ code: 500, description: 'Username already registered' });
 	});
 	it('Should not allow invalid payload', () => {
 		return assert.eventually.propertyVal(sut.registration({ 123: 123 }), 'isJoi', true);

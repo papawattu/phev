@@ -11,8 +11,8 @@ const logger = require('../common/util').logger;
 const eol = require('../common/util').eol;
 const VehicleCommandHandler = require('./command_handler');
 
-
-module.exports = function VehicleMgr() {
+// TODO: change to class
+module.exports = function VehicleMgr({logger=logger,messageBus}) {
 	const vehicleCommandHandler = new VehicleCommandHandler();
 	let httpServer = null;
 	let server = null;
@@ -71,6 +71,7 @@ module.exports = function VehicleMgr() {
 			register: require('./api').VehicleManagerApiPlugin,
 			options: {
 				logger: logger,
+				messageBus: messageBus,
 			},
 		}, (err) => {
 

@@ -1,53 +1,47 @@
-'use strict';
-const Logger = require('../../common/util').logger;
-const Store = require('../../common/store/promise_store');
-const VehNS = 'vehicles.';
+import { Topics } from '../../common/message_bus/topics';
+import { Message, MessageTypes, MessageCommands } from '../../common/message_bus';
+import Store from '../../common/store/new_store_sync';
+import { VehicleSchema } from '../../common/data/schema';
+import BaseService from '../../common/base_service';
+import * as Joi from 'joi';
 
-module.exports = function VehicleService() {
+export default class VehicleService extends BaseService {
+	constructor({logger, messageBus, store = new Store() }) {
+		super({ logger, messageBus });
 
-	const store = new Store();
-	const logger = Logger;
-	function _getVehicle(vin) {
-		logger.debug('Call to get vehicle vin ' + vin);
-		return store.get(VehNS + vin).then(data => {
-			return data;
-		});
+		this.store = store;
+
+		this.registerMessageHandler(Topics.VEHICLE_TOPIC, VehicleSchema, { type: MessageTypes.Request }, 
+			[{
+				name: MessageCommands.Get,
+				numArgs: 1,
+				handle: this.getVehicle,
+			}, {
+				name: MessageCommands.Add,
+				numArgs: 1,
+				handle: this.addVehicle,
+			}]);
 	}
-	function _getVehicleByDeviceId(id) {
-		logger.debug('Call to get vehicle by id ' + id);
-		return store.get('vehicles').then(data => {
-			return data.find(e => e.deviceId === id);
-		});
+	getVehicle(vin) {
+		this.logger.debug('Call to get vehicle vin ' + vin);
+		return this.store.get(vin);
 	}
-	function _getVehicles() {
-		logger.debug('Call to get vehicles vin ');
-		return store.get('vehicles').then(data => {
-			return data;
-		});
+	getVehicles(filter) {
+		this.logger.debug('Call to get vehicles');
+		return this.store.getAll(filter);
 	}
-	function _addVehicle(vehicle) {
-		logger.debug('Call to register vehicle ' + vehicle);
-		return store.has(VehNS + vehicle.vin).then((exists) => {
-			if(exists) {
-				throw new Error('VIN already registered ' + vehicle.vin);
-			}    
-			return store.set(VehNS + vehicle.vin, vehicle);
+	addVehicle(vehicle) {
+		this.logger.debug('Call to register vehicle ' + vehicle);
+		Joi.validate(vehicle,(err,value) => {
+			if(err) {
+				this.logger.error('Add vehicle validation error ' + err + ' value ' + value);
+				throw err;
+			}
 		});
+		if(this.store.has(vehicle.vehicle.vin)) {
+			throw new Error('VIN already registered ' + vehicle.vehicle.vin);
+		}
+		this.store.set(vehicle.vehicle.vin, vehicle);
+		return;
 	}
-	function _registerRemote(vehicle) {
-		logger.debug('Call to register vehicle ' + vehicle);
-		return store.has(VehNS + vehicle.vin).then((exists) => {
-			if(exists) {
-				throw new Error('VIN already registered ' + vehicle.vin);
-			}    
-			return store.set(VehNS + vehicle.vin, vehicle);
-		});
-	}
-	return {
-		getVehicle: _getVehicle,
-		getVehicles: _getVehicles,
-		addVehicle: _addVehicle,
-		registerRemote: _registerRemote,
-		getVehicleByDeviceId: _getVehicleByDeviceId,
-	};
-};
+}

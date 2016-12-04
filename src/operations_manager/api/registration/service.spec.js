@@ -29,6 +29,9 @@ describe('Registration service', () => {
 		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
 		return assert.isFulfilled(sut.registration(register));
 	});
 	it('Should register another user', () => {
@@ -38,19 +41,26 @@ describe('Registration service', () => {
 		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
 		return assert.isFulfilled(sut.registration(register2));
 
 	});
 	it('Should not allow same username to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			const message = Message.replyTo(data);
-			message.error = { code: 500, description: 'Username already registered' };
+			message.error = 'Username already registered';
 			messageBus.sendMessage(message);
 		});
 		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		return assert.eventually.deepEqual(sut.registration(register),{ code: 500, description: 'Username already registered' });
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
+		const p = sut.registration(register);
+		return assert.eventually.equal(p,'Username already registered',` ${p}`);
 	});
 	it('Should not allow same VIN to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
@@ -60,6 +70,9 @@ describe('Registration service', () => {
 			const message = Message.replyTo(data);
 			message.error = { code: 500, description: 'Vehicle already registered' };
 			messageBus.sendMessage(message);
+		});
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
 		});
 		return assert.eventually.deepEqual(sut.registration(register3),{ code: 500, description: 'Vehicle already registered' });
 	});

@@ -15,7 +15,7 @@ describe('App Bootstrap', () => {
 		mocks.messageBus.start = sinon.stub();
 		mocks.messageBus.stop = sinon.stub();
 		mocks.messageBus.sendMessage = sinon.stub();
-
+		mocks.messageBus.subscribe = sinon.stub();
 
 		mocks.operationsManager = {};
 		mocks.operationsManager.start = sinon.stub();

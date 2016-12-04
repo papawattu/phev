@@ -1,12 +1,12 @@
 'use strict';
-
-const DeviceService = require('./service/device_service');
+// TODO: fix me
+//const DeviceService = {};//require('./service/device_service');
 const eol = require('../common/util').eol;
 
 
 module.exports = function VehicleCommandHandler() {
 
-	const deviceService = new DeviceService();
+	const deviceService = {};//new DeviceService();
 
 	const commands = [{
 		name: 'CONNECT',

@@ -11,7 +11,7 @@ module.exports = function registrationController({logger,messageBus}) {
 		registrationService.registration(request.payload).then(() => {
 			reply({status : 'ok'}).created('/users/' + request.payload.register.user.username);
 		}).catch((err) => {
-			logger.error('Registration controller error ' + err);
+			logger.error(`Registration controller error : ${JSON.stringify(err)}`);
 			reply({status : 'error',error : err}).code(400);
 		});
 	}

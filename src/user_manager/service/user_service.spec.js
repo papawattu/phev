@@ -39,11 +39,13 @@ describe('User service get user Id', () => {
 	});
 });
 describe('User service message bus', () => {
-	before(() => {
+	beforeEach(() => {
 		messageBus.start();
+		sut.start();
 	});
-	after(() => {
+	afterEach(() => {
 		messageBus.stop();
+		sut.stop();
 	});
 	it('Should handle GET command', (done) => {
 		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: User1.user.username, correlation: true });

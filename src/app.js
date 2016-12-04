@@ -4,20 +4,25 @@ import { Topics } from './common/message_bus/topics';
 import { logger } from './common/logger';
 import OperationsManager from './operations_manager/operations_manager';
 import VehicleManager from './vehicle_manager/vehicle_manager';
+import UserService from './user_manager/service/user_service';
 
 export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger }),
 		operationsManager = new OperationsManager({ logger, messageBus }),
 		vehicleManager = new VehicleManager({ logger, messageBus }) }= {}) {
-
-		this.messageBus = messageBus;
+		
 		this.logger = logger;
+		
+		this.messageBus = messageBus;
+		this.userService = new UserService({logger, messageBus});
+
 		this.vehicleManager = vehicleManager;
 		this.operationsManager = operationsManager;
-
+		
 		this.messageBus.start();
-
+		this.userService.start();
+	
 		process.on('exit', () => {
 			this.logger.info('Exit - Stopping application');
 			this.stop(10000 * 20, () => {

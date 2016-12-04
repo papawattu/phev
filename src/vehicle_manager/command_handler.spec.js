@@ -12,7 +12,7 @@ const sut = new VehicleCommandHandler();
 function eol(str) {
 	return sut.eol(str);
 }
-describe('Vehicle Command Handler', () => {
+describe.skip('Vehicle Command Handler', () => {
 	let result = '';
 	it('Should connect', () => {
 		return assert.becomes(result = sut.handleCommand('CONNECT'), 'OK', 'Connect should return OK actually returned ' + result);

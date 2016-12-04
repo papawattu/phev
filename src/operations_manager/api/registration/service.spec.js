@@ -60,7 +60,7 @@ describe('Registration service', () => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
 		const p = sut.registration(register);
-		return assert.eventually.equal(p,'Username already registered',` ${p}`);
+		return assert.isRejected(p);
 	});
 	it('Should not allow same VIN to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
@@ -74,9 +74,9 @@ describe('Registration service', () => {
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		return assert.eventually.deepEqual(sut.registration(register3),{ code: 500, description: 'Vehicle already registered' });
+		return assert.isRejected(sut.registration(register3));
 	});
 	it('Should not allow invalid payload', () => {
-		return assert.eventually.propertyVal(sut.registration({ 123: 123 }), 'isJoi', true);
+		return assert.isRejected(sut.registration({ 123: 123 }));
 	});
 });

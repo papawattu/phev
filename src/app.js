@@ -5,6 +5,8 @@ import { logger } from './common/logger';
 import OperationsManager from './operations_manager/operations_manager';
 import VehicleManager from './vehicle_manager/vehicle_manager';
 import UserService from './user_manager/service/user_service';
+import VehicleService from './vehicle_manager/service/vehicle_service';
+import DongleService from './vehicle_manager/service/dongle_service';
 
 export default class App {
 	constructor({
@@ -15,13 +17,17 @@ export default class App {
 		this.logger = logger;
 		
 		this.messageBus = messageBus;
-		this.userService = new UserService({logger, messageBus});
-
-		this.vehicleManager = vehicleManager;
+		this.userService = new UserService({logger, messageBus,port: 3031});
+		this.vehicleService = new VehicleService({logger, messageBus,port: 3032});
+		this.dongleService = new DongleService({logger, messageBus,port: 3033});
+		
 		this.operationsManager = operationsManager;
+		this.vehicleManager = vehicleManager;
 		
 		this.messageBus.start();
 		this.userService.start();
+		this.vehicleService.start();
+		this.dongleService.start();
 	
 		process.on('exit', () => {
 			this.logger.info('Exit - Stopping application');

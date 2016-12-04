@@ -2,31 +2,34 @@ import BaseService from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({logger, messageBus}) {
+	constructor({logger, messageBus, port=3030, name}) {
 		super({ logger, messageBus });
+		this.port = port;
+		this.name = name;
 	}
 	start() {
 		super.start();
 		this.httpServer = new hapi.Server({
-			debug: {
-				request: ['error'],
-				log: ['error']
-			}
+
 		});
 		this.httpServer.connection({
-			port: process.env.SERVER_PORT || 3030,
+			port: this.port,
 		});
 		this.httpServer.start((err) => {
 			if (err) {
+				this.logger.error(this.name + ' Service Http Api failed to start ' + err);
 				throw err;
 			}
-			this.logger.info('User Service Http Api listening', this.httpServer.info.uri);
+			this.logger.info(this.name + ' Http Api listening', this.httpServer.info.uri);
 		});
 	}
 	stop() {
 		super.stop();
 		this.httpServer.stop({}, (err) => {
-			if (err) throw err;
+			if (err) {
+				this.logger.error(this.name + ' Http Api failed to stop ' + err);
+				throw err;
+			}
 		});
 
 	}

@@ -37,7 +37,7 @@ describe.skip('Registration operations', () => {
 					password: 'qwertyuiop',
 					vin: 'VIN1234',
 				},
-				device: {
+				dongle: {
 					id: '12345',
 				}
 			}

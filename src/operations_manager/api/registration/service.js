@@ -75,10 +75,10 @@ export default class RegistrationService extends BaseService {
 			]).then((resp) => {
 				return resp;
 			}).catch((err) => {
-				return err;
+				return Promise.reject(err);
 			});
 		}).catch((err) => {
-			return err;
+			return Promise.reject(err);
 		});
 	}
 }

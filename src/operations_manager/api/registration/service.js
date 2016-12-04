@@ -75,9 +75,11 @@ export default class RegistrationService extends BaseService {
 			]).then((resp) => {
 				return resp;
 			}).catch((err) => {
+				this.logger.error('Failed to register ' + err);
 				return Promise.reject(err);
 			});
 		}).catch((err) => {
+			this.logger.error('Failed to register ' + err);
 			return Promise.reject(err);
 		});
 	}

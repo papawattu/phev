@@ -68,6 +68,7 @@ export default class DongleService extends HttpService {
 				throw err;
 			}
 			if(this.store.has(dongle.dongle.id)) {
+				this.logger.error('Dongle already exists ' + dongle.dongle.id);
 				throw new Error('Dongle already exists ' + dongle.dongle.id);
 			} 
 			this.store.set(dongle.dongle.id, dongle);

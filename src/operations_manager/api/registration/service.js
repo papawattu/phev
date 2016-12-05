@@ -49,7 +49,7 @@ export default class RegistrationService extends BaseService {
 				if (data.error === null) {
 					resolve(data.payload);
 				} else {
-					logger.error(`create vehicle error response : ${JSON.stringify(data.error)}`);
+					logger.error(`create dongle error response : ${JSON.stringify(data.error)}`);
 					reject(data.error);
 				}
 			});

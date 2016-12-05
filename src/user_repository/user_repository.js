@@ -1,14 +1,15 @@
-import { Topics } from '../../common/message_bus/topics';
-import { MessageTypes, MessageCommands } from '../../common/message_bus';
-import Store from '../../common/store/new_store_sync';
-import { UserSchema } from '../../common/data/schema';
-import HttpService from '../../common/http_service';
 import * as Joi from 'joi';
 
-export default class UserService extends HttpService {
+import { Topics } from '../common/message_bus/topics';
+import { MessageTypes, MessageCommands } from '../common/message_bus';
+import Store from '../common/store/new_store_sync';
+import { UserSchema } from '../common/data/schema';
+import HttpService from '../common/http_service';
+
+export default class UserRepository extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
 		super({ logger, messageBus, port });
-		this.name = 'User Service';
+		this.name = 'User Repository';
 		this.store = store;
 	}
 	start(done) {
@@ -23,7 +24,7 @@ export default class UserService extends HttpService {
 					numArgs: 1,
 					handle: this.addUser,
 				}]);
-			this.registerHttpHandler('user_manager', {
+			this.registerHttpHandler('user_repository', {
 				get: {
 					method: (request, reply) => {
 						const user = this.getUser(request.params.username);

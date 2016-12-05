@@ -1,16 +1,16 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import UserService from './user_service';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../../common/message_bus';
-import { logger } from '../../common/logger';
-import { Topics } from '../../common/message_bus/topics';
-import { User1, User3 } from '../../common/data/data';
+import UserRepository from './user_repository';
+import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus';
+import { logger } from '../common/logger';
+import { Topics } from '../common/message_bus/topics';
+import { User1, User3 } from '../common/data/data';
 
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({logger});
 messageBus.start();
-const sut = new UserService({ logger: logger, messageBus: messageBus,port: 3036 });
+const sut = new UserRepository({ logger: logger, messageBus: messageBus,port: 3036 });
 
 chai.use(chaiAsPromised);
 

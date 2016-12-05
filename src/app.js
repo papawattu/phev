@@ -4,7 +4,7 @@ import { Topics } from './common/message_bus/topics';
 import { logger } from './common/logger';
 import Operations from './operations/operations';
 import VehicleManager from './vehicle_manager/vehicle_manager';
-import UserService from './user_manager/service/user_service';
+import UserRepository from './user_repository/user_repository';
 import VehicleService from './vehicle_manager/service/vehicle_service';
 import DongleService from './vehicle_manager/service/dongle_service';
 

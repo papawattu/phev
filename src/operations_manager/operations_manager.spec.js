@@ -8,11 +8,11 @@ const PORT = '3000';
 const logger = require('../common/logging');
 const assert = require('chai').assert;
 const request = require('superagent');
-const OperationsManagerHttpApi = require('./operations_manager');
+const Operations = require('./operations_manager');
 
 const messageBus = new MessageBus();
 
-const sut = new OperationsManagerHttpApi({logger, messageBus});
+const sut = new Operations({logger, messageBus});
 
 describe('Operations Manager status', () => {
 	it('Should return service status as string', () => {

@@ -2,7 +2,7 @@
 import { MessageBus, Message, MessageTypes, MessageCommands } from './common/message_bus/message_bus';
 import { Topics } from './common/message_bus/topics';
 import { logger } from './common/logger';
-import OperationsManager from './operations_manager/operations_manager';
+import Operations from './operations_manager/operations_manager';
 import VehicleManager from './vehicle_manager/vehicle_manager';
 import UserService from './user_manager/service/user_service';
 import VehicleService from './vehicle_manager/service/vehicle_service';
@@ -11,7 +11,7 @@ import DongleService from './vehicle_manager/service/dongle_service';
 export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger }),
-		operationsManager = new OperationsManager({ logger, messageBus }),
+		operationsManager = new Operations({ logger, messageBus }),
 		vehicleManager = new VehicleManager({ logger, messageBus }) }= {}) {
 		
 		this.logger = logger;

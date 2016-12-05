@@ -13,7 +13,7 @@ export default class App {
 		operations = new Operations({ logger, messageBus }),
 		userRepository = new UserRepository({ logger, messageBus,port: 3037}),
 		dongleRepository = new DongleRepository({ logger, messageBus,port: 3038}),
-		vehicleRepository = new VehicleRepository({ logger, messageBus, poert: 3039})
+		vehicleRepository = new VehicleRepository({ logger, messageBus, port: 3039})
 	} = {}) {
 
 		this.logger = logger;

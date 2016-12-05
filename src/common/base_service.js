@@ -12,12 +12,16 @@ export default class BaseService extends BaseClass {
 		this.name = name;
 	}
 	start() {
-		this.logger.info('Started Service ' + this.name);
-		this.status = ServiceStatus.Started;
+		if(this.status === ServiceStatus.Stopped) {
+			this.logger.info('Started Service ' + this.name);
+			this.status = ServiceStatus.Started;
+		}
 	}
 	stop() {
-		this.logger.info('Started Service ' + this.name);
-		this.status = ServiceStatus.Stopped;
+		if(this.status === ServiceStatus.Started) {
+			this.logger.info('Started Service ' + this.name);
+			this.status = ServiceStatus.Stopped;
+		}
 	}
 	registerMessageHandler(topic,schema,filter,commands) {
 		this.messageBus.subscribe(topic, filter, (message) => {
@@ -32,7 +36,7 @@ export default class BaseService extends BaseClass {
 							commands.find(e => e.name === message.command)
 								.handle.call(this, message.payload);
 					} catch(err) {
-						this.logger.error(this.name + 'register message handler command failed ' + err);
+						this.logger.error(this.name + ' register message handler command failed ' + err);
 						replyMessage.error = err;
 					}
 				}

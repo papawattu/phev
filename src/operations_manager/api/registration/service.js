@@ -9,9 +9,10 @@ export default class RegistrationService extends BaseService {
 	constructor({logger, messageBus}) {
 
 		logger.info('Started registration service');
-		super({ logger: logger, messageBus: messageBus });
+		super({ logger, messageBus });
 	}
 	createUser(user) {
+		logger.debug(`createUser : ${JSON.stringify(user)}`);
 		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { user: user }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.USER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
@@ -27,6 +28,7 @@ export default class RegistrationService extends BaseService {
 		return response;
 	}
 	createVehicle(vehicle) {
+		logger.debug(`createVehicle : ${JSON.stringify(vehicle)}`);
 		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { vehicle: vehicle }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {

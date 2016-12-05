@@ -13,7 +13,7 @@ const OperationsManagerHttpApi = require('../../../operations_manager');
 const messageBus = new MessageBus();
 const opmgr = new OperationsManagerHttpApi({logger,messageBus});
 
-describe('Light operations', ()=> {
+describe.skip('Light operations', ()=> {
 	before((done) => {
 		opmgr.start(done);
 	});

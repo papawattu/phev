@@ -56,7 +56,7 @@ export class MessageBus extends BaseClass {
 	}
 	start() {
 		this.eventEmitter.on(this.name, (message) => {
-			this.logger.debug('*** ' + JSON.stringify(message));
+			this.logger.debug('MESSAGE BUS ' + this.name  + ' : Message ' + JSON.stringify(message));
 		});
 
 		this.status = MessageBusStatus.Started;
@@ -69,8 +69,6 @@ export class MessageBus extends BaseClass {
 					e.callback(data);
 				}
 			});
-		});
-		this.eventEmitter.on(this.name, (data) => {
 			this.listeners.forEach((e,idx) => {
 				if((e.topic === data.topic) && (this.filter(e.filter,data))) {
 					this.listeners.splice(idx,1);
@@ -89,7 +87,7 @@ export class MessageBus extends BaseClass {
 	}
 	sendMessage(message) {
 		this.errorIfNotStarted();
-		this.logger.debug('MESSAGE BUS : sendMessage ' + message);
+		this.logger.debug('MESSAGE BUS ' + this.name  + ' : sendMessage ' + message);
 		this.eventEmitter.emit(this.name, message);
 		return message.id;
 	}
@@ -105,7 +103,7 @@ export class MessageBus extends BaseClass {
 	receiveMessageFilter(topic, f, callback) {
 		this.errorIfNotStarted();
 		
-		this.logger.debug('MESSAGE BUS : receiveMessageFilter topic ' + topic + ' filter ' + JSON.stringify(f) + ' Calling callback');
+		this.logger.debug('MESSAGE BUS ' + this.name  + ' : receiveMessageFilter topic ' + topic + ' filter ' + JSON.stringify(f) + ' Calling callback');
 		
 		this.listeners.push({topic: topic, filter: f, callback: callback});
 		

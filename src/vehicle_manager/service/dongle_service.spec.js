@@ -10,7 +10,7 @@ import { Topics } from '../../common/message_bus/topics';
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger });
 messageBus.start();
-const sut = new DongleService({ logger: logger, messageBus: messageBus });
+const sut = new DongleService({ logger: logger, messageBus: messageBus,port: 3035 });
 
 describe('Dongle Service register', () => {
 	it('Should register dongle ID', () => {
@@ -26,11 +26,11 @@ describe('Dongle Service register', () => {
 	});
 });
 describe('Dongle message bus', () => {
-	beforeEach(()=> {
-		sut.start();
+	beforeEach((done)=> {
+		sut.start(done);
 	});
-	afterEach(() => {
-		sut.stop();
+	afterEach((done) => {
+		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {
 		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Dongle4.dongle.id, correlation: true });

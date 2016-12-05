@@ -1,4 +1,5 @@
 import BaseService from './base_service';
+import {ServiceStatus} from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
@@ -7,7 +8,10 @@ export default class HttpService extends BaseService {
 		this.port = port;
 		this.name = name;
 	}
-	start() {
+	start(done) {
+		if(this.status === ServiceStatus.Started) {
+			return;
+		} 
 		super.start();
 		this.httpServer = new hapi.Server({
 
@@ -21,15 +25,20 @@ export default class HttpService extends BaseService {
 				throw err;
 			}
 			this.logger.info(this.name + ' Http Api listening', this.httpServer.info.uri);
+			done();
 		});
 	}
-	stop() {
+	stop(done) {
+		if(this.status === ServiceStatus.Stopped) {
+			return;
+		}
 		super.stop();
 		this.httpServer.stop({}, (err) => {
 			if (err) {
 				this.logger.error(this.name + ' Http Api failed to stop ' + err);
 				throw err;
 			}
+			done();
 		});
 
 	}

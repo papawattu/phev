@@ -1,29 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-
 import App from './app';
+import {Mocks} from './common/test/mocks';
 
 const assert = chai.use(chaiAsPromised).assert;
 
-const mocks = {};
+const mocks = Mocks;
 
 describe('App Bootstrap', () => {
-	beforeEach(() => {
-
-		mocks.messageBus = {};
-		mocks.messageBus.start = sinon.stub();
-		mocks.messageBus.stop = sinon.stub();
-		mocks.messageBus.sendMessage = sinon.stub();
-		mocks.messageBus.subscribe = sinon.stub();
-
-		mocks.operationsManager = {};
-		mocks.operationsManager.start = sinon.stub();
-		mocks.operationsManager.stop = sinon.stub();
-
-		mocks.vehicleManager = {};
-		mocks.vehicleManager.start = sinon.stub();
-		mocks.vehicleManager.stop = sinon.stub();
+	before(() => {
 
 	});
 	it('Should start services at construction', () => {

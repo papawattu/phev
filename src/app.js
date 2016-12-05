@@ -52,6 +52,8 @@ export default class App {
 
 		this.logger.info('Stopping services');
 
+		this.userService.stop(() => {});
+
 		this.messageBus.sendMessage(message);
 
 		this.messageBus.stop();

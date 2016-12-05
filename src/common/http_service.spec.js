@@ -5,22 +5,31 @@ import * as Joi from 'joi';
 
 import { logger } from './logger';
 import HttpService from './http_service';
-import {MessageBus} from './message_bus/message_bus';
 import {ServiceStatus} from './base_service';
+import sinon from 'sinon';
 
 const assert = chai.use(chaiAsPromised).assert;
 
 const TestSchema = Joi.object().keys({id: Joi.string().required()});
-const messageBus = new MessageBus({logger});
+
+const mocks = {};
+
+mocks.messageBus = {};
+mocks.messageBus.start = sinon.stub();
+mocks.messageBus.stop = sinon.stub();
+mocks.messageBus.sendMessage = sinon.stub();
+mocks.messageBus.subscribe = sinon.stub();
+		
+const messageBus = mocks.messageBus;
 const httpService = new HttpService({logger,messageBus});
 
 describe('Http service', () => {
 
 	before(() => {
-		messageBus.start();
+		//messageBus.start();
 	});
 	after(() => {
-		messageBus.stop();
+		//messageBus.stop();
 	});
 	it('Should be stopped by default ', () => {
 		assert.equal(httpService.status,ServiceStatus.Stopped,`Expected http service status to be stopped was ${httpService.status}`);

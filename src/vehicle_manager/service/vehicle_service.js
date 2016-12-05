@@ -7,51 +7,53 @@ import * as Joi from 'joi';
 
 export default class VehicleService extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus,port});
+		super({ logger, messageBus, port });
 		this.name = 'Vehicle Service';
 		this.store = store;
 
 	}
-	start() {
-		super.start();
-		this.registerMessageHandler(Topics.VEHICLE_TOPIC, VehicleSchema, { type: MessageTypes.Request },
-			[{
-				name: MessageCommands.Get,
-				numArgs: 1,
-				handle: this.getVehicle,
-			}, {
-				name: MessageCommands.Add,
-				numArgs: 1,
-				handle: this.addVehicle,
-			}]);
-		this.registerHttpHandler('vehicle_manager', {
-			get: {
-				method: (request, reply) => {
-					const vehicle = this.getVehicle(request.params.vin);
-					if (vehicle) {
-						reply(vehicle).code(200);
-					} else {
-						reply({ status: 'Vehicle not found' }).code(404);
-					}
+	start(done) {
+		super.start(() => {
+			this.registerMessageHandler(Topics.VEHICLE_TOPIC, VehicleSchema, { type: MessageTypes.Request },
+				[{
+					name: MessageCommands.Get,
+					numArgs: 1,
+					handle: this.getVehicle,
+				}, {
+					name: MessageCommands.Add,
+					numArgs: 1,
+					handle: this.addVehicle,
+				}]);
+			this.registerHttpHandler('vehicle_manager', {
+				get: {
+					method: (request, reply) => {
+						const vehicle = this.getVehicle(request.params.vin);
+						if (vehicle) {
+							reply(vehicle).code(200);
+						} else {
+							reply({ status: 'Vehicle not found' }).code(404);
+						}
+					},
+					path: '/vehicles/{vin}',
 				},
-				path: '/vehicles/{vin}',
-			},
-			post: {
-				method: (request, reply) => {
-					try {
-						this.addVehicle(request.payload);
-						reply({}).created('/vehicles/' + request.payload.vehicle.vin);
-					} catch (err) {
-						reply({ err }).code(400);
-					}
-				},
-				path: '/vehicles',
-				schema: VehicleSchema,
-			}
+				post: {
+					method: (request, reply) => {
+						try {
+							this.addVehicle(request.payload);
+							reply({}).created('/vehicles/' + request.payload.vehicle.vin);
+						} catch (err) {
+							reply({ err }).code(400);
+						}
+					},
+					path: '/vehicles',
+					schema: VehicleSchema,
+				}
+			});
+			done();
 		});
 	}
-	stop() {
-		super.stop();
+	stop(done) {
+		super.stop(done);
 	}
 	getVehicle(vin) {
 		this.logger.debug('Call to get vehicle vin ' + vin);
@@ -69,6 +71,7 @@ export default class VehicleService extends HttpService {
 				throw err;
 			}
 			if (this.store.has(vehicle.vehicle.vin)) {
+				this.logger.error('VIN already exists ' + vehicle.vehicle.vin);
 				throw new Error('VIN already registered ' + vehicle.vehicle.vin);
 			}
 			this.store.set(vehicle.vehicle.vin, vehicle);

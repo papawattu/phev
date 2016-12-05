@@ -10,7 +10,7 @@ import { Topics } from '../../common/message_bus/topics';
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger });
 messageBus.start();
-const sut = new VehicleService({ logger: logger, messageBus: messageBus });
+const sut = new VehicleService({ logger: logger, messageBus: messageBus, port: 3034 });
 
 chai.use(chaiAsPromised);
 
@@ -38,11 +38,11 @@ describe.skip('Vehicle service get vin', () => {
 	});
 });
 describe('Vehicle message bus', () => {
-	beforeEach(()=> {
-		sut.start();
+	beforeEach((done)=> {
+		sut.start(done);
 	});
-	afterEach(() => {
-		sut.stop();
+	afterEach((done) => {
+		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {
 		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Vehicle.vehicle.vin, correlation: true });

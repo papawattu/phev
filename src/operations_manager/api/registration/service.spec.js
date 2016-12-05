@@ -59,8 +59,7 @@ describe('Registration service', () => {
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		const p = sut.registration(register);
-		return assert.isRejected(p);
+		return assert.isRejected(sut.registration(register),'Username already registered');
 	});
 	it('Should not allow same VIN to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
@@ -68,13 +67,27 @@ describe('Registration service', () => {
 		});
 		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			const message = Message.replyTo(data);
-			message.error = { code: 500, description: 'Vehicle already registered' };
+			message.error = 'Vehicle already registered';
 			messageBus.sendMessage(message);
 		});
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		return assert.isRejected(sut.registration(register3));
+		return assert.isRejected(sut.registration(register),'Vehicle already registered');
+	});
+	it('Should not allow same dongle to be registered twice', () => {
+		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
+		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			messageBus.sendMessage(Message.replyTo(data));
+		});
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
+			const message = Message.replyTo(data);
+			message.error = 'Dongle already registered';
+			messageBus.sendMessage(message);
+		});
+		return assert.isRejected(sut.registration(register),'Dongle already registered');
 	});
 	it('Should not allow invalid payload', () => {
 		return assert.isRejected(sut.registration({ 123: 123 }));

@@ -10,7 +10,7 @@ import { User1, User3 } from '../../common/data/data';
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({logger});
 messageBus.start();
-const sut = new UserService({ logger: logger, messageBus: messageBus });
+const sut = new UserService({ logger: logger, messageBus: messageBus,port: 3036 });
 
 chai.use(chaiAsPromised);
 
@@ -20,7 +20,7 @@ describe('User Service', () => {
 		assert.deepEqual(sut.getUser(User1.user.username), User1, `Expected to get : ${User1} got ${sut.getUser(User1.user.username)}`);
 	});
 	it('Should not add user with existing username', () => {
-		return assert.throws((() => { sut.addUser(User1); }), `User already exists ${User1.user.username}`);
+		return assert.throws((() => { sut.addUser(User1); }), `Username already exists ${User1.user.username}`);
 	});
 });
 
@@ -39,13 +39,13 @@ describe('User service get user Id', () => {
 	});
 });
 describe('User service message bus', () => {
-	beforeEach(() => {
+	beforeEach((done) => {
 		messageBus.start();
-		sut.start();
+		sut.start(done);
 	});
-	afterEach(() => {
+	afterEach((done) => {
 		messageBus.stop();
-		sut.stop();
+		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {
 		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: User1.user.username, correlation: true });

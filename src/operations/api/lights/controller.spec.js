@@ -8,7 +8,7 @@ const logger = require('../../../common/logging');
 const assert = require('chai').assert;
 const request = require('superagent');
 const status = require('http-status');
-const OperationsManagerHttpApi = require('../../../operations_manager');
+const OperationsManagerHttpApi = require('../../../operations');
 
 const messageBus = new MessageBus();
 const opmgr = new OperationsManagerHttpApi({logger,messageBus});

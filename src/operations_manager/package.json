@@ -1,5 +1,0 @@
-{ 
-  "name" : "operations_manager",
-  "main" : "operations_manager.js",
-  "version": "0.1"
-}

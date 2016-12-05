@@ -8,7 +8,7 @@ const PORT = '3000';
 const logger = require('../common/logging');
 const assert = require('chai').assert;
 const request = require('superagent');
-const Operations = require('./operations_manager');
+const Operations = require('./operations');
 
 const messageBus = new MessageBus();
 

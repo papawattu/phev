@@ -9,11 +9,11 @@ const logger = require('../../../common/logging');
 const assert = require('chai').assert;
 const request = require('superagent');
 const status = require('http-status');
-const OperationsManagerHttpApi = require('../../../operations_manager');
+const Operations = require('../../../operations');
 
 const messageBus = new MessageBus({logger});
 messageBus.start();
-const opmgr = new OperationsManagerHttpApi({logger,messageBus});
+const opmgr = new Operations({logger,messageBus});
 
 describe.skip('Registration operations', () => {
 	before((done) => {

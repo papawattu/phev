@@ -1,14 +1,15 @@
-import { Topics } from '../../common/message_bus/topics';
-import { MessageTypes, MessageCommands } from '../../common/message_bus';
-import Store from '../../common/store/new_store_sync';
-import { VehicleSchema } from '../../common/data/schema';
-import HttpService from '../../common/http_service';
 import * as Joi from 'joi';
 
-export default class VehicleService extends HttpService {
+import { Topics } from '../common/message_bus/topics';
+import { MessageTypes, MessageCommands } from '../common/message_bus';
+import Store from '../common/store/new_store_sync';
+import { VehicleSchema } from '../common/data/schema';
+import HttpService from '../common/http_service';
+
+export default class VehicleRepository extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
 		super({ logger, messageBus, port });
-		this.name = 'Vehicle Service';
+		this.name = 'Vehicle Repository';
 		this.store = store;
 
 	}

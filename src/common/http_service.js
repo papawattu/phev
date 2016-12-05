@@ -1,5 +1,5 @@
+
 import BaseService from './base_service';
-import { ServiceStatus } from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
@@ -7,9 +7,7 @@ export default class HttpService extends BaseService {
 		super({ logger, messageBus });
 		this.port = port;
 		this.name = name;
-		this.httpServer = new hapi.Server({
-
-		});
+		this.httpServer = new hapi.Server({});
 		this.httpServer.connection({
 			port: this.port,
 		});

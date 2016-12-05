@@ -3,24 +3,39 @@ import { MessageBus, Message, MessageTypes, MessageCommands } from './common/mes
 import { Topics } from './common/message_bus/topics';
 import { logger } from './common/logger';
 import Operations from './operations/operations';
-import VehicleManager from './vehicle_manager/vehicle_manager';
 import UserRepository from './user_repository/user_repository';
-import VehicleService from './vehicle_manager/service/vehicle_service';
-import DongleService from './vehicle_manager/service/dongle_service';
+import DongleRepository from './vehicle_repository/dongle_repository';
+import VehicleRepository from './vehicle_repository/vehicle_repository';
 
 export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger, name: 'Main Application' }),
-		operations = new Operations({ logger, messageBus })
+		operations = new Operations({ logger, messageBus }),
+		userRepository = new UserRepository({ logger, messageBus,port: 3037}),
+		dongleRepository = new DongleRepository({ logger, messageBus,port: 3038}),
+		vehicleRepository = new VehicleRepository({ logger, messageBus, poert: 3039})
 	} = {}) {
 
 		this.logger = logger;
-
 		this.messageBus = messageBus;
 		this.operations = operations;
 		
-		this.messageBus.start();
 		
+		this.vehicleRepository = vehicleRepository;
+		this.userRepository = userRepository;
+		this.dongleRepository = dongleRepository;
+
+		this.messageBus.start();
+
+		this.vehicleRepository.start(() => {
+			this.logger.info('Started Vehicle Repository');
+		});
+		this.userRepository.start(() => {
+			this.logger.info('Started User Repository');
+		});
+		this.dongleRepository.start(() => {
+			this.logger.info('Started Dongle Repository');
+		});
 		this.operations.start(() => {
 			this.logger.info('Started Operation Endpoints');
 		});
@@ -28,6 +43,15 @@ export default class App {
 	stop(done) {
 		this.logger.info('Stopping services');
 
+		this.vehicleRepository.stop(() => {
+			this.logger.info('Stopped Vehicle Repository');
+		});
+		this.userRepository.stop(() => {
+			this.logger.info('Stopped User Repository');
+		});
+		this.dongleRepository.stop(() => {
+			this.logger.info('Stopped Dongle Repository');
+		});
 		this.messageBus.stop();
 
 		this.operations.stop(() => {

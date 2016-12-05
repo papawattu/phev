@@ -1,20 +1,20 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import VehicleService from './vehicle_service';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../../common/message_bus';
-import { logger } from '../../common/logger';
-import { Vehicle, Vehicle2, Vehicle3 } from '../../common/data/data';
-import { Topics } from '../../common/message_bus/topics';
+import VehicleRepository from './vehicle_repository';
+import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus';
+import { logger } from '../common/logger';
+import { Vehicle, Vehicle2, Vehicle3 } from '../common/data/data';
+import { Topics } from '../common/message_bus/topics';
 
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger });
 messageBus.start();
-const sut = new VehicleService({ logger: logger, messageBus: messageBus, port: 3034 });
+const sut = new VehicleRepository({ logger: logger, messageBus: messageBus, port: 3034 });
 
 chai.use(chaiAsPromised);
 
-describe.skip('Vehicle service register', () => {
+describe.skip('Vehicle repository register', () => {
 
 	it('Should register VIN', () => {
 		sut.addVehicle(Vehicle);
@@ -29,7 +29,7 @@ describe.skip('Vehicle service register', () => {
 	});
 });
 
-describe.skip('Vehicle service get vin', () => {
+describe.skip('Vehicle repository get vin', () => {
 	it('Should get vehicle from VIN', () => {
 		return assert.deepEqual(sut.getVehicle(Vehicle.vehicle.vin), Vehicle);
 	});

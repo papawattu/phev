@@ -1,8 +1,8 @@
-import { Topics } from '../../common/message_bus/topics';
-import { MessageTypes, MessageCommands } from '../../common/message_bus';
-import Store from '../../common/store/new_store_sync';
-import { DongleSchema } from '../../common/data/schema';
-import HttpService from '../../common/http_service';
+import { Topics } from '../common/message_bus/topics';
+import { MessageTypes, MessageCommands } from '../common/message_bus';
+import Store from '../common/store/new_store_sync';
+import { DongleSchema } from '../common/data/schema';
+import HttpService from '../common/http_service';
 import * as Joi from 'joi';
 
 export default class DongleService extends HttpService {

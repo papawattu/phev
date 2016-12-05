@@ -1,18 +1,18 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import DongleService from './dongle_service';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../../common/message_bus';
-import { logger } from '../../common/logger';
-import { Dongle, Dongle2, Dongle3, Dongle4 } from '../../common/data/data';
-import { Topics } from '../../common/message_bus/topics';
+import DongleRepository from './dongle_repository';
+import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus';
+import { logger } from '../common/logger';
+import { Dongle, Dongle2, Dongle3, Dongle4 } from '../common/data/data';
+import { Topics } from '../common/message_bus/topics';
 
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger });
 messageBus.start();
-const sut = new DongleService({ logger: logger, messageBus: messageBus,port: 3035 });
+const sut = new DongleRepository({ logger: logger, messageBus: messageBus,port: 3035 });
 
-describe('Dongle Service register', () => {
+describe('Dongle Repository register', () => {
 	it('Should register dongle ID', () => {
 		sut.addDongle(Dongle);
 		assert.deepEqual(sut.getDongle(Dongle.dongle.id),Dongle,'Should be equal to ' + JSON.stringify(Dongle) + ' is ' + JSON.stringify(sut.getDongle(Dongle.dongle.id)));

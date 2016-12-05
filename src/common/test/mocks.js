@@ -12,6 +12,14 @@ Mocks.operations = {};
 Mocks.operations.start = sinon.stub();
 Mocks.operations.stop = sinon.stub();
 
-Mocks.vehicleManager = {};
-Mocks.vehicleManager.start = sinon.stub();
-Mocks.vehicleManager.stop = sinon.stub();
+Mocks.vehicleRepository = {};
+Mocks.vehicleRepository.start = sinon.stub();
+Mocks.vehicleRepository.stop = sinon.stub();
+
+Mocks.dongleRepository = {};
+Mocks.dongleRepository.start = sinon.stub();
+Mocks.dongleRepository.stop = sinon.stub();
+
+Mocks.userRepository = {};
+Mocks.userRepository.start = sinon.stub();
+Mocks.userRepository.stop = sinon.stub();

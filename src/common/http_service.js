@@ -3,14 +3,14 @@ import {ServiceStatus} from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({logger, messageBus, port=3030, name}) {
+	constructor({logger, messageBus, port=3030, name= 'defaultname'}) {
 		super({ logger, messageBus });
 		this.port = port;
 		this.name = name;
 	}
 	start(done) {
 		if(this.status === ServiceStatus.Started) {
-			return;
+			done();
 		} 
 		super.start();
 		this.httpServer = new hapi.Server({
@@ -30,9 +30,10 @@ export default class HttpService extends BaseService {
 	}
 	stop(done) {
 		if(this.status === ServiceStatus.Stopped) {
-			return;
+			done();
 		}
 		super.stop();
+		
 		this.httpServer.stop({}, (err) => {
 			if (err) {
 				this.logger.error(this.name + ' Http Api failed to stop ' + err);
@@ -40,7 +41,6 @@ export default class HttpService extends BaseService {
 			}
 			done();
 		});
-
 	}
 	registerHttpHandler(name, endPoints) {
 

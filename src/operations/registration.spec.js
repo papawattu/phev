@@ -1,20 +1,20 @@
 'use strict';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
-import { logger } from '../../../common/logger';
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const assert = chai.assert;
-import RegistrationService from './service';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../../../common/message_bus/message_bus';
-import { register, register2,register3 } from '../../../common/data/data';
-import { Topics } from '../../../common/message_bus/topics';
+import { logger } from '../common/logger';
+import Registration from './registration';
+import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
+import { register, register2 } from '../common/data/data';
+import { Topics } from '../common/message_bus/topics';
 
+const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger: logger });
-const sut = new RegistrationService({ logger: logger, messageBus: messageBus });
+const sut = new Registration({ logger: logger, messageBus: messageBus });
 
 chai.use(chaiAsPromised);
 
-describe('Registration service', () => {
+describe('Registration', () => {
 
 	before(() => {
 		messageBus.start();

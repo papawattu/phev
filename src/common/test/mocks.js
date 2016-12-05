@@ -8,9 +8,9 @@ Mocks.messageBus.stop = sinon.stub();
 Mocks.messageBus.sendMessage = sinon.stub();
 Mocks.messageBus.subscribe = sinon.stub();
 
-Mocks.operationsManager = {};
-Mocks.operationsManager.start = sinon.stub();
-Mocks.operationsManager.stop = sinon.stub();
+Mocks.operations = {};
+Mocks.operations.start = sinon.stub();
+Mocks.operations.stop = sinon.stub();
 
 Mocks.vehicleManager = {};
 Mocks.vehicleManager.start = sinon.stub();

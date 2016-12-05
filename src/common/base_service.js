@@ -19,7 +19,7 @@ export default class BaseService extends BaseClass {
 	}
 	stop() {
 		if(this.status === ServiceStatus.Started) {
-			this.logger.info('Started Service ' + this.name);
+			this.logger.info('Stopped Service ' + this.name);
 			this.status = ServiceStatus.Stopped;
 		}
 	}

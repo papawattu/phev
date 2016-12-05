@@ -11,67 +11,38 @@ import DongleService from './vehicle_manager/service/dongle_service';
 export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger }),
-		operationsManager = new Operations({ logger, messageBus }),
-		vehicleManager = new VehicleManager({ logger, messageBus }) }= {}) {
-		
+		operations = new Operations({ logger, messageBus })
+	} = {}) {
+
 		this.logger = logger;
-		
+
 		this.messageBus = messageBus;
-		this.userService = new UserService({logger, messageBus,port: 3031});
-		this.vehicleService = new VehicleService({logger, messageBus,port: 3032});
-		this.dongleService = new DongleService({logger, messageBus,port: 3033});
-		
-		this.operationsManager = operationsManager;
-		this.vehicleManager = vehicleManager;
+		this.operations = operations;
 		
 		this.messageBus.start();
-		this.userService.start();
-		this.vehicleService.start();
-		this.dongleService.start();
-	
+		
 		process.on('exit', () => {
 			this.logger.info('Exit - Stopping application');
-			this.stop(10000 * 20, () => {
+			this.stop(60 * 1000, () => {
 				this.logger.info('Application stopped');
 				process.exit(0);
 			});
 		});
-		try {
-			this.operationsManager.start(() => {
-				this.logger.info('Started Operations Manager service.');
-			});
-			this.vehicleManager.start(() => {
-				this.logger.info('Started Vehicle Manager service.');
-			});
-		} catch (err) {
-			throw err;
-		}
+		this.operations.start(() => {
+			this.logger.info('Started Operations Manager service.');
+		});
 	}
 	stop(timeout, done) {
-		const message = new Message({ topic: Topics.SYSTEM, type: MessageTypes.Broadcast, command: MessageCommands.Shutdown });
-
 		this.logger.info('Stopping services');
 
-		this.userService.stop(() => {});
-
-		this.messageBus.sendMessage(message);
-
 		this.messageBus.stop();
-		
-		this.operationsManager.stop({ timeout: timeout }, (err) => {
+
+		this.operations.stop({ timeout: timeout }, (err) => {
 			if (err) {
 				this.logger.error('Operations Manager Server failed to stop ' + err);
 				done(err);
 			}
 			this.logger.info('Operations Manager Server stopped');
-		});
-		this.vehicleManager.stop({ timeout: timeout }, (err) => {
-			if (err) {
-				this.logger.error('Vehicle Manager Server failed to stop ' + err);
-				done(err);
-			}
-			this.logger.info('Vehicle Manager Server stopped');
-			done();
 		});
 	}
 	status() {

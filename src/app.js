@@ -10,7 +10,7 @@ import DongleService from './vehicle_manager/service/dongle_service';
 
 export default class App {
 	constructor({
-		messageBus = new MessageBus({ logger }),
+		messageBus = new MessageBus({ logger, name: 'Main Application' }),
 		operations = new Operations({ logger, messageBus })
 	} = {}) {
 
@@ -21,28 +21,18 @@ export default class App {
 		
 		this.messageBus.start();
 		
-		process.on('exit', () => {
-			this.logger.info('Exit - Stopping application');
-			this.stop(60 * 1000, () => {
-				this.logger.info('Application stopped');
-				process.exit(0);
-			});
-		});
 		this.operations.start(() => {
-			this.logger.info('Started Operations Manager service.');
+			this.logger.info('Started Operation Endpoints');
 		});
 	}
-	stop(timeout, done) {
+	stop(done) {
 		this.logger.info('Stopping services');
 
 		this.messageBus.stop();
 
-		this.operations.stop({ timeout: timeout }, (err) => {
-			if (err) {
-				this.logger.error('Operations Manager Server failed to stop ' + err);
-				done(err);
-			}
-			this.logger.info('Operations Manager Server stopped');
+		this.operations.stop(() => {
+			this.logger.info('Stopped Operation Endpoints');
+			done();
 		});
 	}
 	status() {

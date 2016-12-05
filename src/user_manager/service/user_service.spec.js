@@ -39,11 +39,11 @@ describe('User service get user Id', () => {
 	});
 });
 describe('User service message bus', () => {
-	beforeEach((done) => {
+	before((done) => {
 		messageBus.start();
 		sut.start(done);
 	});
-	afterEach((done) => {
+	after((done) => {
 		messageBus.stop();
 		sut.stop(done);
 	});

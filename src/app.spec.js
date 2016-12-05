@@ -24,10 +24,10 @@ describe('App Bootstrap', () => {
 			operations: mocks.operations
 		});
 
-		app.stop(60 * 1000, () => {});
-		assert(mocks.messageBus.stop.calledOnce,'Message bus stop should be called');
-		assert(mocks.operations.stop.calledOnce,'Operations stop should be called');
-
+		app.stop(() => {
+			assert(mocks.messageBus.stop.calledOnce,'Message bus stop should be called');
+			assert(mocks.operations.stop.calledOnce,'Operations stop should be called');
+		});
 	});
 	it('Should return service status should return array', () => {
 		const app = new App({

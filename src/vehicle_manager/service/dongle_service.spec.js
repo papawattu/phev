@@ -26,10 +26,10 @@ describe('Dongle Service register', () => {
 	});
 });
 describe('Dongle message bus', () => {
-	beforeEach((done)=> {
+	before((done) => {
 		sut.start(done);
 	});
-	afterEach((done) => {
+	after((done) => {
 		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {

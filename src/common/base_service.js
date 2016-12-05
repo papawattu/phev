@@ -11,17 +11,15 @@ export default class BaseService extends BaseClass {
 		this.status = ServiceStatus.Stopped;
 		this.name = name;
 	}
-	start() {
-		if(this.status === ServiceStatus.Stopped) {
-			this.logger.info('Started Service ' + this.name);
-			this.status = ServiceStatus.Started;
-		}
+	start(done) {
+		done();
+		this.logger.info('Started Service ' + this.name);
+		this.status = ServiceStatus.Started;
 	}
-	stop() {
-		if(this.status === ServiceStatus.Started) {
-			this.logger.info('Stopped Service ' + this.name);
-			this.status = ServiceStatus.Stopped;
-		}
+	stop(done) {
+		this.logger.info('Stopped Service ' + this.name);
+		this.status = ServiceStatus.Stopped;
+		done();
 	}
 	registerMessageHandler(topic,schema,filter,commands) {
 		this.messageBus.subscribe(topic, filter, (message) => {

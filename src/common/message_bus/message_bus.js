@@ -56,7 +56,7 @@ export class MessageBus extends BaseClass {
 	}
 	start() {
 		this.eventEmitter.on(this.name, (message) => {
-			this.logger.debug('MESSAGE BUS ' + this.name  + ' : Message ' + JSON.stringify(message));
+			this.logger.debug('***MESSAGE BUS ' + this.name  + ' : Message ' + JSON.stringify(message));
 		});
 
 		this.status = MessageBusStatus.Started;
@@ -76,7 +76,7 @@ export class MessageBus extends BaseClass {
 				}
 			});
 		});
-		this.logger.info(this.name + ': Message Bus Started');
+		this.logger.info('Started Message Bus : ' + this.name);
 	}
 	stop() {
 		this.eventEmitter.removeAllListeners();
@@ -87,7 +87,7 @@ export class MessageBus extends BaseClass {
 	}
 	sendMessage(message) {
 		this.errorIfNotStarted();
-		this.logger.debug('MESSAGE BUS ' + this.name  + ' : sendMessage ' + message);
+		this.logger.debug('***MESSAGE BUS ' + this.name  + ' : sendMessage ' + message);
 		this.eventEmitter.emit(this.name, message);
 		return message.id;
 	}

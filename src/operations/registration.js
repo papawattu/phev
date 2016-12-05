@@ -7,13 +7,17 @@ import HttpService from '../common/http_service';
 
 export default class Registration extends HttpService {
 	constructor({logger, messageBus}) {
-        super({ logger, messageBus});
-		this.logger.info('Started registration');
+        super({ logger, messageBus, name: 'Registration'});
+		this.logger.info('Started Registration');
 	}
 	start(done) {
 		super.start(() => {
 			this.registerHttpHandler('registration', {
-				post: {
+				get: {
+                    path: '/registration',
+                    method: () => {},
+                },
+                post: {
                     path: '/registration',
 					method: (request, reply) => {
 						this.registration(request.payload).then(() => {
@@ -25,8 +29,8 @@ export default class Registration extends HttpService {
 					},
 				},
 			});
+            done();
 		});
-		done();
 	}
 	stop(done) {
 		super.stop(done);

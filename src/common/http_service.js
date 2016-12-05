@@ -1,49 +1,44 @@
 import BaseService from './base_service';
-import {ServiceStatus} from './base_service';
+import { ServiceStatus } from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({logger, messageBus, port=3030, name= 'defaultname'}) {
+	constructor({logger, messageBus, port = 3030, name = 'defaultname'}) {
 		super({ logger, messageBus });
 		this.port = port;
 		this.name = name;
-	}
-	start(done) {
-		if(this.status === ServiceStatus.Started) {
-			done();
-		} 
-		super.start();
 		this.httpServer = new hapi.Server({
 
 		});
 		this.httpServer.connection({
 			port: this.port,
 		});
-		this.httpServer.start((err) => {
-			if (err) {
-				this.logger.error(this.name + ' Service Http Api failed to start ' + err);
-				throw err;
-			}
-			this.logger.info(this.name + ' Http Api listening', this.httpServer.info.uri);
-			done();
+	}
+	start(done) {
+		super.start(() => {
+			this.httpServer.start((err) => {
+				if (err) {
+					this.logger.error(this.name + ' Service Http Api failed to start ' + err);
+					throw err;
+				}
+				this.logger.info(this.name + ' Http Api listening', this.httpServer.info.uri);
+				done();
+			});
 		});
 	}
 	stop(done) {
-		if(this.status === ServiceStatus.Stopped) {
-			done();
-		}
-		super.stop();
-		
-		this.httpServer.stop({}, (err) => {
-			if (err) {
-				this.logger.error(this.name + ' Http Api failed to stop ' + err);
-				throw err;
-			}
-			done();
+		super.stop(() => {
+			this.httpServer.stop({}, (err) => {
+				if (err) {
+					this.logger.error(this.name + ' Http Api failed to stop ' + err);
+					throw err;
+				}
+				done();
+			});
 		});
 	}
 	registerHttpHandler(name, endPoints) {
-
+		this.logger.debug(`Registering plugin : ${name}`);
 		const plugin = {
 			register: (server, options, next) => {
 				server.route([{
@@ -60,7 +55,7 @@ export default class HttpService extends BaseService {
 		};
 		plugin.register.attributes = {
 			name: name,
-		//	version: '1.0.0'
+			//	version: '1.0.0'
 		};
 
 		this.httpServer.register(plugin, (err) => {

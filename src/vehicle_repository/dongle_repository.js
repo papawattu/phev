@@ -7,8 +7,7 @@ import * as Joi from 'joi';
 
 export default class DongleService extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus, port });
-		this.name = 'Dongle Service';
+		super({ logger, messageBus, port, name: 'Dongle Repository' });
 		this.store = store;
 	}
 	start(done) {

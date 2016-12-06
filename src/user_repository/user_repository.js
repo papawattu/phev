@@ -8,8 +8,8 @@ import HttpService from '../common/http_service';
 
 export default class UserRepository extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus, port });
-		this.name = 'User Repository';
+		super({ logger, messageBus, port, name: 'User Repository' });
+
 		this.store = store;
 	}
 	start(done) {
@@ -56,7 +56,7 @@ export default class UserRepository extends HttpService {
 		super.stop(done);
 	}
 	getUser(username) {
-		this.logger.debug('Call to get user username ' + username);
+		this.logger.debug('Call to get user : ' + username);
 		return this.store.get(username);
 	}
 	getUsers(filter) {
@@ -64,15 +64,15 @@ export default class UserRepository extends HttpService {
 		return this.store.getAll(filter);
 	}
 	addUser(user) {
-		this.logger.debug('Call to add new user ' + user.username + ' ' + JSON.stringify(user));
+		this.logger.debug('Call to add new user : ' + user.username + ' ' + JSON.stringify(user));
 		Joi.validate(user.user, UserSchema, (err, value) => {
 			if (err) {
 				this.logger.error('Add user validation error ' + err + ' value ' + value);
 				throw err;
 			}
 			if (this.store.has(user.user.username)) {
-				this.logger.error('Username already exists ' + user.user.username);
-				throw new Error('Username already exists ' + user.user.username);
+				this.logger.error('Username already exists : ' + user.user.username);
+				throw new Error('Username already exists : ' + user.user.username);
 			}
 			this.store.set(user.user.username, user);
 			return;

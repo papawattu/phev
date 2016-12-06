@@ -3,15 +3,15 @@ import { Topics } from '../common/message_bus/topics';
 import { Message, MessageTypes, MessageCommands } from '../common/message_bus';
 import * as Joi from 'joi';
 import { logger } from '../common/logger';
-import HttpService from '../common/http_service';
+import PromiseHttpService from '../common/http_service';
 
-export default class Registration extends HttpService {
+export default class Registration extends PromiseHttpService {
 	constructor({logger, messageBus}) {
         super({ logger, messageBus, name: 'Registration'});
 		this.logger.info('Started Registration');
 	}
-	start(done) {
-		super.start(() => {
+	start() {
+		return super.start(() => {
 			this.registerHttpHandler('registration', {
 				get: {
                     path: '/registration',
@@ -29,7 +29,6 @@ export default class Registration extends HttpService {
 					},
 				},
 			});
-            done();
 		});
 	}
 	stop(done) {

@@ -8,10 +8,9 @@ import HttpService from '../common/http_service';
 
 export default class VehicleRepository extends HttpService {
 	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus, port });
-		this.name = 'Vehicle Repository';
+		super({ logger, messageBus, port, name: 'Vehicle Repository' });
+		
 		this.store = store;
-
 	}
 	start(done) {
 		super.start(() => {

@@ -27,8 +27,8 @@ export class Message {
 	}
 }
 export class MessageBus extends BaseClass {
-	constructor({name = 'default', logger = logger} = {}) {
-		super({logger: logger});
+	constructor({name = 'defaultmessagebus', logger = logger} = {}) {
+		super({logger: logger,name: 'Message Bus'});
 
 		this.name = name;
 		this.eventEmitter = new EventEmitter();

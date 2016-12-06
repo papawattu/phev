@@ -23,3 +23,7 @@ Mocks.dongleRepository.stop = sinon.stub();
 Mocks.userRepository = {};
 Mocks.userRepository.start = sinon.stub();
 Mocks.userRepository.stop = sinon.stub();
+
+Mocks.httpService = {};
+Mocks.httpService.start = sinon.stub();
+Mocks.httpService.stop = sinon.stub();

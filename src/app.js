@@ -11,33 +11,78 @@ export default class App {
 	constructor({
 		messageBus = new MessageBus({ logger, name: 'Main Application' }),
 		operations = new Operations({ logger, messageBus }),
-		userRepository = new UserRepository({ logger, messageBus,port: 3037}),
-		dongleRepository = new DongleRepository({ logger, messageBus,port: 3038}),
-		vehicleRepository = new VehicleRepository({ logger, messageBus, port: 3039})
-	} = {}) {
+		userRepository = new UserRepository({ logger, messageBus, port: 3037 }),
+		dongleRepository = new DongleRepository({ logger, messageBus, port: 3038 }),
+		vehicleRepository = new VehicleRepository({ logger, messageBus, port: 3039 })
+	}) {
 
 		this.logger = logger;
 		this.messageBus = messageBus;
 		this.operations = operations;
-		
-		
+
+
 		this.vehicleRepository = vehicleRepository;
 		this.userRepository = userRepository;
 		this.dongleRepository = dongleRepository;
 
+		this.start((err)=>{
+			if(err) {
+				this.logger.error('App failed to start : ' + err);
+				process.exit(1);
+			}
+		});
+	}
+	start(done) {
+		
 		this.messageBus.start();
 
-		this.vehicleRepository.start(() => {
-			this.logger.info('Started Vehicle Repository');
-		});
-		this.userRepository.start(() => {
-			this.logger.info('Started User Repository');
-		});
-		this.dongleRepository.start(() => {
-			this.logger.info('Started Dongle Repository');
-		});
-		this.operations.start(() => {
-			this.logger.info('Started Operation Endpoints');
+		Promise.all([
+			new Promise((response, reject) => {
+				this.vehicleRepository.start((err) => {
+					if(err) {
+						reject(err);
+					} else {
+						this.logger.info('Started Vehicle Repository');
+						response('Started Vehicle Repository');
+					}
+				});
+			}),
+			new Promise((response, reject) => {
+				this.userRepository.start((err) => {
+					if(err) {
+						reject(err);
+					} else {
+						this.logger.info('Started User Repository');
+						response('Started User Repository');
+					}
+				});
+			}),
+			new Promise((response, reject) => {
+				this.dongleRepository.start((err) => {
+					if(err) {
+						reject(err);
+					} else {
+						this.logger.info('Started Dongle Repository');
+						response('Started Dongle Repository');
+					}
+				});
+			}),
+			new Promise((response, reject) => {
+				this.operations.start((err) => {
+					if(err) {
+						reject(err);
+					} else {
+						this.logger.info('Started Operation Endpoints');
+						response('Started Operation Endpoints');
+					}
+				});
+			})
+		]).then(() => {
+			this.logger.info('All services started sucessfully');
+			done();
+		}).catch((err) => {
+			this.logger.error('One or more applications failed to start with error(s) : ' + err);
+			done(err);
 		});
 	}
 	stop(done) {
@@ -52,12 +97,11 @@ export default class App {
 		this.dongleRepository.stop(() => {
 			this.logger.info('Stopped Dongle Repository');
 		});
-		this.messageBus.stop();
-
 		this.operations.stop(() => {
 			this.logger.info('Stopped Operation Endpoints');
-			done();
 		});
+		this.messageBus.stop();
+		done();
 	}
 	status() {
 		return [];

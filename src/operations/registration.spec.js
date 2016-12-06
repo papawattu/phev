@@ -1,4 +1,4 @@
-'use strict';
+//TODO: this needs to be refactored as its more of an integration test
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -7,6 +7,7 @@ import Registration from './registration';
 import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
 import { register, register2 } from '../common/data/data';
 import { Topics } from '../common/message_bus/topics';
+import {Mocks} from '../common/test/mocks';
 
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus({ logger: logger });

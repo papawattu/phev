@@ -20,7 +20,7 @@ describe('User Service', () => {
 		assert.deepEqual(sut.getUser(User1.user.username), User1, `Expected to get : ${User1} got ${sut.getUser(User1.user.username)}`);
 	});
 	it('Should not add user with existing username', () => {
-		return assert.throws((() => { sut.addUser(User1); }), `Username already exists ${User1.user.username}`);
+		return assert.throws((() => { sut.addUser(User1); }), `Username already exists : ${User1.user.username}`);
 	});
 });
 

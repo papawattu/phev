@@ -16,7 +16,7 @@ describe('Operations bootstrap',()=>{
         Mocks.httpService.start.reset();
     });
     it('Should start with no operations',(done)=>{
-        const sut = new Operations({logger,operations: []});
+        const sut = new Operations({logger,messageBus: Mocks.messageBus,operations: []});
 
         sut.start(()=> {
             assert.equal(sut.status,ServiceStatus.Started);

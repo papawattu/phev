@@ -9,17 +9,16 @@ import VehicleRepository from './vehicle_repository/vehicle_repository';
 
 export default class App {
 	constructor({
-		messageBus = new MessageBus({ logger, name: 'Main Application' }),
-		operations = new Operations({ logger, messageBus }),
-		userRepository = new UserRepository({ logger, messageBus, port: 3037 }),
-		dongleRepository = new DongleRepository({ logger, messageBus, port: 3038 }),
-		vehicleRepository = new VehicleRepository({ logger, messageBus, port: 3039 })
-	}) {
+		messageBus = new MessageBus({ name: 'Main Application' }),
+		operations = new Operations({ messageBus }),
+		userRepository = new UserRepository({ messageBus, port: 3037 }),
+		dongleRepository = new DongleRepository({ messageBus, port: 3038 }),
+		vehicleRepository = new VehicleRepository({ messageBus, port: 3039 })
+	} = {}) {
 
 		this.logger = logger;
 		this.messageBus = messageBus;
 		this.operations = operations;
-
 
 		this.vehicleRepository = vehicleRepository;
 		this.userRepository = userRepository;

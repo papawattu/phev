@@ -26,9 +26,17 @@ export default class Operations extends BaseService {
 	}
 	stop(done) {
 		super.stop(() => {
-			this.registration.stop(() => {
+			this.operations.forEach((operation) => {
+				operation.stop((err) => {
+					if(err) {
+						this.logger.error(operation.name + ' failed to stop ' + err);
+						throw err;
+					}
+				});
 			});
+			done();
 		});
-		done();
+		
+		
 	}
 }

@@ -7,8 +7,8 @@ import { VehicleSchema } from '../common/data/schema';
 import HttpService from '../common/http_service';
 
 export default class VehicleRepository extends HttpService {
-	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus, port, name: 'Vehicle Repository' });
+	constructor({messageBus, port, store = new Store() }) {
+		super({ messageBus, port, name: 'Vehicle Repository' });
 		
 		this.store = store;
 	}

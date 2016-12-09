@@ -1,3 +1,4 @@
 {
-  "presets": ["latest"]
+  "presets": ["latest"],
+  "plugins": [["resolver", {"resolveDirs": ["src"]}]]
 }

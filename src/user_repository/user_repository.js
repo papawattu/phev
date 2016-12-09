@@ -7,8 +7,8 @@ import { UserSchema } from '../common/data/schema';
 import HttpService from '../common/http_service';
 
 export default class UserRepository extends HttpService {
-	constructor({logger, messageBus, port, store = new Store() }) {
-		super({ logger, messageBus, port, name: 'User Repository' });
+	constructor({ messageBus, port, store = new Store() }) {
+		super({ messageBus, port, name: 'User Repository' });
 
 		this.store = store;
 	}

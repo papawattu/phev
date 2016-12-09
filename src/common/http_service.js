@@ -3,8 +3,8 @@ import BaseService from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({logger, messageBus, port = 3030, name = 'defaulthttpservicename'}) {
-		super({ logger, messageBus, name });
+	constructor({ messageBus, port = 3030, name = 'defaulthttpservicename'}) {
+		super({ messageBus, name });
 		this.port = port;
 		this.name = name;
 		this.httpServer = new hapi.Server({});
@@ -62,16 +62,5 @@ export default class HttpService extends BaseService {
 				throw err;
 			}
 		});
-	}
-}
-export class PromiseHttpService extends HttpService {
-	constructor({logger, messageBus, port = 3030, name = 'defaulthttpservicename'}) {
-		super({ logger, messageBus, port, name });
-	}
-	start(done) {
-		super.start(done);
-	}
-	stop(done) {
-		super.stop(done);
 	}
 }

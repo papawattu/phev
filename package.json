@@ -37,6 +37,7 @@
     "superagent": "^2.3.0"
   },
   "dependencies": {
+    "babel-plugin-resolver": "^1.1.0",
     "babel-polyfill": "^6.16.0",
     "boom": "^4.2.0",
     "cache-base": "^0.8.4",

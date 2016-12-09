@@ -2,12 +2,12 @@ import BaseService from '../common/base_service';
 import Registration from './registration';
 
 export default class Operations extends BaseService {
-	constructor({logger, messageBus,
+	constructor({ messageBus,
 		operations = [
-			new Registration({ logger, messageBus })
+			new Registration({ messageBus })
 		]}) {
 
-		super({ logger, messageBus, name: 'Operations' });
+		super({ messageBus, name: 'Operations' });
 
 		this.operations = operations;
 	}

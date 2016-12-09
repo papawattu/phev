@@ -1,12 +1,9 @@
-import { logger } from './logger';
+import { logger } from '../common/logger';
 
 export default class BaseClass {
-	constructor({logger, name = 'defaultbaseclassname'}) {
-		console.log('logger ' + logger + ' param' + this.logger);
+	constructor({name = 'defaultbaseclassname'}) {
 		this.logger = logger;
 		this.name = name;
 		this.logger.info('Logger is configured for : ' + this.name);
-		console.log('logger ' + logger + ' param' + this.logger);
-
 	}
 }

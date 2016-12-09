@@ -2,12 +2,11 @@ import { RegistrationSchema } from '../common/data/schema';
 import { Topics } from '../common/message_bus/topics';
 import { Message, MessageTypes, MessageCommands } from '../common/message_bus';
 import * as Joi from 'joi';
-import { logger } from '../common/logger';
-import PromiseHttpService from '../common/http_service';
+import HttpService from '../common/http_service';
 
-export default class Registration extends PromiseHttpService {
-	constructor({logger, messageBus}) {
-        super({ logger, messageBus, name: 'Registration'});
+export default class Registration extends HttpService {
+	constructor({ messageBus}) {
+        super({ messageBus, name: 'Registration'});
 		this.logger.info('Started Registration');
 	}
 	start() {
@@ -23,7 +22,7 @@ export default class Registration extends PromiseHttpService {
 						this.registration(request.payload).then(() => {
 							reply({ status: 'ok' }).created('/users/' + request.payload.register.user.username);
 						}).catch((err) => {
-							logger.error(`Registration error : ${JSON.stringify(err)}`);
+							this.logger.error(`Registration error : ${JSON.stringify(err)}`);
 							reply({ status: 'error', error: err }).code(400);
 						});
 					},
@@ -35,14 +34,14 @@ export default class Registration extends PromiseHttpService {
 		super.stop(done);
 	}
 	createUser(user) {
-		logger.debug(`createUser : ${JSON.stringify(user)}`);
+		this.logger.debug(`createUser : ${JSON.stringify(user)}`);
 		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { user: user }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.USER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {
 					resolve(data.payload);
 				} else {
-					logger.error(`create user error response : ${JSON.stringify(data.error)}`);
+					this.logger.error(`create user error response : ${JSON.stringify(data.error)}`);
 					reject(data.error);
 				}
 			});
@@ -51,14 +50,14 @@ export default class Registration extends PromiseHttpService {
 		return response;
 	}
 	createVehicle(vehicle) {
-		logger.debug(`createVehicle : ${JSON.stringify(vehicle)}`);
+		this.logger.debug(`createVehicle : ${JSON.stringify(vehicle)}`);
 		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { vehicle: vehicle }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {
 					resolve(data.payload);
 				} else {
-					logger.error(`create vehicle error response : ${JSON.stringify(data.error)}`);
+					this.logger.error(`create vehicle error response : ${JSON.stringify(data.error)}`);
 					reject(data.error);
 				}
 			});
@@ -67,14 +66,14 @@ export default class Registration extends PromiseHttpService {
 		return response;
 	}
 	createDevice(dongleId, vin) {
-		logger.debug(`createDevice id: ${dongleId} vin: ${vin}`);
+		this.logger.debug(`createDevice id: ${dongleId} vin: ${vin}`);
 		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { dongle: { id: dongleId, vin: vin } }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {
 					resolve(data.payload);
 				} else {
-					logger.error(`create dongle error response : ${JSON.stringify(data.error)}`);
+					this.logger.error(`create dongle error response : ${JSON.stringify(data.error)}`);
 					reject(data.error);
 				}
 			});
@@ -86,7 +85,7 @@ export default class Registration extends PromiseHttpService {
 		return new Promise((resolve, reject) => {
 			Joi.validate(reg, RegistrationSchema, (err, value) => {
 				if (err) {
-					logger.error('Validation rejected ' + JSON.stringify(value));
+					this.logger.error('Validation rejected ' + JSON.stringify(value));
 					reject(err);
 				} else {
 					resolve(value);

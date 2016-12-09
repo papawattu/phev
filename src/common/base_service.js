@@ -5,8 +5,8 @@ import * as Joi from 'joi';
 export const ServiceStatus = { Stopped: 'STOPPED', Started: 'STARTED' };
 
 export default class BaseService extends BaseClass {
-	constructor({logger, messageBus, name = 'defaultservicename'}) {
-		super({ logger, name });
+	constructor({messageBus, name = 'defaultservicename'}) {
+		super({ name });
 		this.messageBus = messageBus;
 		this.status = ServiceStatus.Stopped;
 	}

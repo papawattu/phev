@@ -17,7 +17,7 @@ export default class Operations extends BaseService {
 				operation.start((err) => {
 					if (err) {
 						this.logger.error(operation.name + ' failed to start ' + err);
-					 	throw err;
+						throw err;
 					}
 				});
 			});
@@ -28,7 +28,7 @@ export default class Operations extends BaseService {
 		super.stop(() => {
 			this.operations.forEach((operation) => {
 				operation.stop((err) => {
-					if(err) {
+					if (err) {
 						this.logger.error(operation.name + ' failed to stop ' + err);
 						throw err;
 					}
@@ -36,7 +36,7 @@ export default class Operations extends BaseService {
 			});
 			done();
 		});
-		
-		
+
+
 	}
 }

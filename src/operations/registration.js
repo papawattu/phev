@@ -6,18 +6,18 @@ import HttpService from '../common/http_service';
 
 export default class Registration extends HttpService {
 	constructor({ messageBus}) {
-        super({ messageBus, name: 'Registration'});
+		super({ messageBus, name: 'Registration'});
 		this.logger.info('Started Registration');
 	}
 	start() {
 		return super.start(() => {
 			this.registerHttpHandler('registration', {
 				get: {
-                    path: '/registration',
-                    method: () => {},
-                },
-                post: {
-                    path: '/registration',
+					path: '/registration',
+					method: () => {},
+				},
+				post: {
+					path: '/registration',
 					method: (request, reply) => {
 						this.registration(request.payload).then(() => {
 							reply({ status: 'ok' }).created('/users/' + request.payload.register.user.username);

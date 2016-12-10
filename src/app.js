@@ -1,6 +1,5 @@
 'use strict';
-import { MessageBus, Message, MessageTypes, MessageCommands } from './common/message_bus/message_bus';
-import { Topics } from './common/message_bus/topics';
+import { MessageBus } from './common/message_bus/message_bus';
 import { logger } from './common/logger';
 import Operations from './operations/operations';
 import UserRepository from './user_repository/user_repository';
@@ -24,21 +23,21 @@ export default class App {
 		this.userRepository = userRepository;
 		this.dongleRepository = dongleRepository;
 
-		this.start((err)=>{
-			if(err) {
+		this.start((err) => {
+			if (err) {
 				this.logger.error('App failed to start : ' + err);
 				process.exit(1);
 			}
 		});
 	}
 	start(done) {
-		
+
 		this.messageBus.start();
 
 		Promise.all([
 			new Promise((response, reject) => {
 				this.vehicleRepository.start((err) => {
-					if(err) {
+					if (err) {
 						reject(err);
 					} else {
 						this.logger.info('Started Vehicle Repository');
@@ -48,7 +47,7 @@ export default class App {
 			}),
 			new Promise((response, reject) => {
 				this.userRepository.start((err) => {
-					if(err) {
+					if (err) {
 						reject(err);
 					} else {
 						this.logger.info('Started User Repository');
@@ -58,7 +57,7 @@ export default class App {
 			}),
 			new Promise((response, reject) => {
 				this.dongleRepository.start((err) => {
-					if(err) {
+					if (err) {
 						reject(err);
 					} else {
 						this.logger.info('Started Dongle Repository');
@@ -68,7 +67,7 @@ export default class App {
 			}),
 			new Promise((response, reject) => {
 				this.operations.start((err) => {
-					if(err) {
+					if (err) {
 						reject(err);
 					} else {
 						this.logger.info('Started Operation Endpoints');

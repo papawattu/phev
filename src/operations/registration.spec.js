@@ -1,4 +1,4 @@
-//TODO: this needs to be refactored as its more of an integration test
+//TODO: this needs to be refactored as its more of an integration test with message bus
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -6,7 +6,7 @@ import Registration from './registration';
 import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
 import { register, register2 } from '../common/data/data';
 import { Topics } from '../common/message_bus/topics';
-import {Mocks} from '../common/test/mocks';
+//import { Mocks } from '../common/test/mocks';
 
 const assert = chai.use(chaiAsPromised).assert;
 const messageBus = new MessageBus();
@@ -59,7 +59,7 @@ describe('Registration', () => {
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		return assert.isRejected(sut.registration(register),'Username already registered');
+		return assert.isRejected(sut.registration(register), 'Username already registered');
 	});
 	it('Should not allow same VIN to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
@@ -73,7 +73,7 @@ describe('Registration', () => {
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
 			messageBus.sendMessage(Message.replyTo(data));
 		});
-		return assert.isRejected(sut.registration(register),'Vehicle already registered');
+		return assert.isRejected(sut.registration(register), 'Vehicle already registered');
 	});
 	it('Should not allow same dongle to be registered twice', () => {
 		messageBus.receiveMessageFilter(Topics.USER_TOPIC, { type: MessageTypes.Request, command: MessageCommands.Add }, (data) => {
@@ -87,7 +87,7 @@ describe('Registration', () => {
 			message.error = 'Dongle already registered';
 			messageBus.sendMessage(message);
 		});
-		return assert.isRejected(sut.registration(register),'Dongle already registered');
+		return assert.isRejected(sut.registration(register), 'Dongle already registered');
 	});
 	it('Should not allow invalid payload', () => {
 		return assert.isRejected(sut.registration({ 123: 123 }));

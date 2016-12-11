@@ -9,6 +9,8 @@ const hapi = require('hapi');
 const eol = require('../common/util').eol;
 const VehicleCommandHandler = require('./command_handler');
 
+const CRLF = '/r/n';
+
 // TODO: change to class
 module.exports = function VehicleMgr({logger=logger,messageBus}) {
 	const vehicleCommandHandler = new VehicleCommandHandler();
@@ -151,4 +153,4 @@ module.exports = function VehicleMgr({logger=logger,messageBus}) {
 
 		},
 	};
-};
+}; 

@@ -1,5 +1,5 @@
 import net from 'net';
-import { Message, MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
+import { MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
 import { Topics } from '../common/message_bus/topics';
 import HttpService from '../common/http_service';
 
@@ -26,7 +26,7 @@ export default class VehicleGateway extends HttpService {
 		this.sendToSocket('HELLO PHEV',socket);
 
 		socket.on('data', (data)=> {
-			
+
 			this.sendMessage(data,socket);
 		});
 	}

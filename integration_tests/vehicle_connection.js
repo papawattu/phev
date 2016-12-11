@@ -16,7 +16,7 @@ const EOL = '\r\n';
 const eol = (str) => str + EOL;
 const client = new net.Socket();
 describe('Integration tests', () => {
-		before(() => {
+	before(() => {
 		app = new App();		
 	});
 	after((done) => {

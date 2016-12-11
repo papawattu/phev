@@ -12,6 +12,8 @@ export default class VehicleGateway extends HttpService {
 		this.server = null;
 		this.gatewayPort = gatewayPort;
 		this.clients = [];
+
+		this.server = net.createServer(this.handleNewConnection.bind(this));
 	}
 	sendToSocket(string,socket) {
 		socket.write(string + CRLF);
@@ -42,8 +44,6 @@ export default class VehicleGateway extends HttpService {
 					numArgs: 1,
 					handle: null,
 				}]);
-
-			this.server = net.createServer(this.handleNewConnection.bind(this));
 
 			this.server.on('error', (err) => {
 				throw err;

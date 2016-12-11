@@ -40,7 +40,7 @@ describe('App Bootstrap', () => {
 		setTimeout(()=> {
 			assert.equal(app.status,'STARTED');
 			done();
-		},100);
+		},1);
 	});
 
 	it('Should have failed status if one ore more services fail at startup ', (done) => {

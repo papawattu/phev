@@ -25,7 +25,7 @@ describe('App Bootstrap', () => {
 		assert(mocks.dongleRepository.start.calledOnce, 'Should start dongle repository');
 	});
 	// TODO: Need a better way to test this as it stops the test watcher in development
-	it.skip('Should exit with one ore more services fail at startup ', () => {
+	it('Should exit with one ore more services fail at startup ', () => {
 		mocks.userRepository.start = sinon.stub().throws();
 		new App({
 			messageBus: mocks.messageBus,

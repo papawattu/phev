@@ -3,7 +3,7 @@ import BaseService from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({ messageBus, port = 3030, name = 'defaulthttpservicename'}) {
+	constructor({ messageBus, port, name = 'defaulthttpservicename'}) {
 		super({ messageBus, name });
 		this.port = port;
 		this.name = name;

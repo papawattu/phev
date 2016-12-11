@@ -10,9 +10,9 @@ export default class App {
 	constructor({
 		messageBus = new MessageBus({ name: 'Main Application' }),
 		operations = new Operations({ messageBus }),
-		userRepository = new UserRepository({ messageBus, port: 3037 }),
-		dongleRepository = new DongleRepository({ messageBus, port: 3038 }),
-		vehicleRepository = new VehicleRepository({ messageBus, port: 3039 })
+		userRepository = new UserRepository({ messageBus, port: 3030 }),
+		dongleRepository = new DongleRepository({ messageBus, port: 3031 }),
+		vehicleRepository = new VehicleRepository({ messageBus, port: 3032 })
 	} = {}) {
 
 		this.logger = logger;
@@ -26,8 +26,9 @@ export default class App {
 		this.start((err) => {
 			if (err) {
 				this.logger.error('App failed to start : ' + err);
-				process.exit(1);
+				return false;
 			}
+			return true;
 		});
 	}
 	start(done) {

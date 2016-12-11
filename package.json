@@ -11,7 +11,7 @@
     "test-watch": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --watch --reporter dot --recursive ./src",
     "test-integration": "node_modules/.bin/_mocha --compilers js:babel-register --recursive ./integration_tests",
     "integration-test": "npm run build && npm run test-integration",
-    "eslint": "./node_modules/.bin/eslint ./src --fix"
+    "eslint": "./node_modules/.bin/eslint ./src ./integration_tests ./features --fix"
   },
   "repository": {
     "type": "git",

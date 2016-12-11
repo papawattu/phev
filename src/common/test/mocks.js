@@ -9,21 +9,25 @@ Mocks.messageBus.sendMessage = sinon.stub();
 Mocks.messageBus.subscribe = sinon.stub();
 
 Mocks.operations = {};
-Mocks.operations.start = sinon.stub();
-Mocks.operations.stop = sinon.stub();
+Mocks.operations.start = sinon.stub().yields();
+Mocks.operations.stop = sinon.stub().yields();
 
 Mocks.vehicleRepository = {};
-Mocks.vehicleRepository.start = sinon.stub();
-Mocks.vehicleRepository.stop = sinon.stub();
+Mocks.vehicleRepository.start = sinon.stub().yields();
+Mocks.vehicleRepository.stop = sinon.stub().yields();
+
+Mocks.vehicleGateway = {};
+Mocks.vehicleGateway.start = sinon.stub().yields();
+Mocks.vehicleGateway.stop = sinon.stub().yields();
 
 Mocks.dongleRepository = {};
-Mocks.dongleRepository.start = sinon.stub();
-Mocks.dongleRepository.stop = sinon.stub();
+Mocks.dongleRepository.start = sinon.stub().yields();
+Mocks.dongleRepository.stop = sinon.stub().yields();
 
 Mocks.userRepository = {};
-Mocks.userRepository.start = sinon.stub();
-Mocks.userRepository.stop = sinon.stub();
+Mocks.userRepository.start = sinon.stub().yields();
+Mocks.userRepository.stop = sinon.stub().yields();
 
 Mocks.httpService = {};
-Mocks.httpService.start = sinon.stub();
-Mocks.httpService.stop = sinon.stub();
+Mocks.httpService.start = sinon.stub().yields();
+Mocks.httpService.stop = sinon.stub().yields();

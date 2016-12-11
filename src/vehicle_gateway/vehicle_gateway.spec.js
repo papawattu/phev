@@ -11,13 +11,15 @@ const sut = new VehicleGateway({ name: 'default',messageBus });
 
 describe('Vehicle Gateway', () => {
 	it('Should start', (done) => {
-		sut.logger.info('Test');
 		sut.start(() => {
 			assert.equal(sut.status, ServiceStatus.Started);
 			done();
 		}); 
 	});
 	it('Should stop', (done) => {
-		sut.stop(done);
+		sut.stop(() => {
+			assert.equal(sut.status, ServiceStatus.Stopped);
+			done();
+		});
 	});
 });

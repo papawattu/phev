@@ -43,7 +43,7 @@ describe('Integration tests', () => {
 				});
 			});
 		});
-		it('Should connect and return NOT registeed, if dongle has not been registered', (done) => {
+		it.skip('Should connect and return NOT registeed, if dongle has not been registered', (done) => {
 			client.write(eol('CONNECT 12345abc'), () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);

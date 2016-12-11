@@ -3,11 +3,10 @@ import BaseService from './base_service';
 import hapi from 'hapi';
 
 export default class HttpService extends BaseService {
-	constructor({ messageBus, port, name = 'defaulthttpservicename'}) {
+	constructor({ messageBus, port=3030, name = 'defaulthttpservicename', httpServer = new hapi.Server({})}) {
 		super({ messageBus, name });
 		this.port = port;
-		this.name = name;
-		this.httpServer = new hapi.Server({});
+		this.httpServer = httpServer;
 		this.httpServer.connection({
 			port: this.port,
 		});

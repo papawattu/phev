@@ -4,4 +4,5 @@ export const Topics = {
 	USER_TOPIC: 'user',
 	VEHICLE_TOPIC: 'vehicle',
 	DONGLE_TOPIC: 'dongle',
+	GATEWAY_TOPIC: 'gateway',
 };

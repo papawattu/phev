@@ -11,7 +11,7 @@ const assert = chai.use(chaiAsPromised).assert;
 
 const TestSchema = Joi.object().keys({ id: Joi.string().required() });
 
-const httpService = new HttpService({ logger, messageBus: Mocks.messageBus });
+const httpService = new HttpService({ logger, messageBus: Mocks.messageBus,port:3000 });
 
 describe('Http service', () => {
 

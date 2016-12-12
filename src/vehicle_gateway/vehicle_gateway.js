@@ -1,35 +1,49 @@
 import net from 'net';
+import uuid from 'uuid';
 import { MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
 import { Topics } from '../common/message_bus/topics';
 import HttpService from '../common/http_service';
+import BaseClass from '../common/base_class';
+import Store from '../common/store/new_store_sync';
 
 const CRLF = '\r\n';
 
+class VehicleSession extends BaseClass {
+	constructor({ socket }) {
+		super({name: 'VehicleSession'});
+		this.id = uuid();
+		this.socket = socket;
+	}
+	send(message) {
+		this.socket.write(message + CRLF);
+	}
+}
+
 export default class VehicleGateway extends HttpService {
-	constructor({ messageBus, name = 'VehicleGateway', port = 3081, gatewayPort = 1974}) {
+	constructor({ messageBus, name = 'VehicleGateway', port = 3081, gatewayPort = 1974,store = new Store()}) {
 		super({ messageBus, name, port });
 		this.handlers = [];
 		this.server = null;
 		this.gatewayPort = gatewayPort;
 		this.clients = [];
-
+		this.store = store;
 		this.server = net.createServer(this.handleNewConnection.bind(this));
 	}
-	sendToSocket(string,socket) {
-		socket.write(string + CRLF);
-	}
-	sendMessage(data,socket) {
+	sendResponse(data,socket) {
 		this.sendToSocket('OK',socket);
 	}
 	handleNewConnection(socket) {
-		
-		this.clients.push(socket);
 
-		this.sendToSocket('HELLO PHEV',socket);
+		const vehicleSession = new VehicleSession(socket);
+
+		this.store.set(vehicleSession.id,vehicleSession);
+
+		vehicleSession.send('HELLO PHEV')
 
 		socket.on('data', (data)=> {
 
-			this.sendMessage(data,socket);
+
+			this.sendResponse(data,socket);
 		});
 	}
 	start(done) {

@@ -61,7 +61,7 @@ export default class VehicleRepository extends HttpService {
 	}
 	getVehicles(filter) {
 		this.logger.debug('Call to get vehicles');
-		return this.store.getAll(filter);
+		return this.store.getFilter(filter);
 	}
 	addVehicle(vehicle) {
 		this.logger.debug('Call to register vehicle ' + JSON.stringify(vehicle));

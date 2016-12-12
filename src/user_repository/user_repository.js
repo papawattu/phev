@@ -59,9 +59,9 @@ export default class UserRepository extends HttpService {
 		this.logger.debug('Call to get user : ' + username);
 		return this.store.get(username);
 	}
-	getUsers(filter) {
+	getUsers() {
 		this.logger.debug('Call to get users');
-		return this.store.getAll(filter);
+		return this.store.getAll();
 	}
 	addUser(user) {
 		this.logger.debug('Call to add new user : ' + user.username + ' ' + JSON.stringify(user));

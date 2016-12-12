@@ -15,6 +15,14 @@ const TestObj = {
 	},
 };
 
+const testObj2 = {
+	key1 : 'key1',
+	key2 : 'key2',
+};
+const testObj3 = {
+	key1 : 'key3',
+	key2 : 'key2',
+};
 before(() => {
 
 });
@@ -37,6 +45,31 @@ describe('Store get', () => {
 	});
 	it('should get undefined back when key not found', () => {
 		assert.equal(store.get('key2'), undefined);
+	});
+});
+describe('Store getAll', () => {
+	it('should get all values', () => {
+		let store = new Store();
+		store.set('getall',testObj2);
+		assert.deepEqual(...store.getAll(),['getall',testObj2]);
+	});
+	it('should get undefined back when key not found', () => {
+		assert.equal(store.get('key2'), undefined);
+	});
+});
+describe('Store getFilter', () => {
+	it('should filter values', () => {
+		const store = new Store();
+		store.set('filtertest1',testObj2);
+		store.set('filtertest2',testObj2);
+		assert.deepEqual(store.getWithFilter({key1: 'key1'}),[["filtertest1",{"key1":"key1","key2":"key2"}],["filtertest2",{"key1":"key1","key2":"key2"}]]);
+
+	});
+	it('should get empty array back when filtered value not found', () => {
+		const store = new Store();
+
+		store.set('filtertest1',testObj3);
+		assert.deepEqual(store.getWithFilter({key1: 'key1'}),[]);
 	});
 });
 describe('Store has', () => {

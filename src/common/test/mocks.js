@@ -20,6 +20,10 @@ Mocks.vehicleGateway = {};
 Mocks.vehicleGateway.start = sinon.stub().yields();
 Mocks.vehicleGateway.stop = sinon.stub().yields();
 
+Mocks.vehicleHandler = {};
+Mocks.vehicleHandler.start = sinon.stub().yields();
+Mocks.vehicleHandler.stop = sinon.stub().yields();
+
 Mocks.dongleRepository = {};
 Mocks.dongleRepository.start = sinon.stub().yields();
 Mocks.dongleRepository.stop = sinon.stub().yields();

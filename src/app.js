@@ -6,6 +6,7 @@ import UserRepository from './user_repository/user_repository';
 import DongleRepository from './vehicle_repository/dongle_repository';
 import VehicleRepository from './vehicle_repository/vehicle_repository';
 import VehicleGateway from './vehicle_gateway/vehicle_gateway';
+import VehicleHandler from './vehicle_gateway/vehicle_handler';
 
 export default class App {
 	constructor({
@@ -15,6 +16,7 @@ export default class App {
 		dongleRepository = new DongleRepository({ messageBus, port: 3001 }),
 		vehicleRepository = new VehicleRepository({ messageBus, port: 3002 }),
 		vehicleGateway = new VehicleGateway({ messageBus, port: 3003 }),
+		vehicleHandler = new VehicleHandler({ messageBus, port: 3004 }),
 	} = {}) {
 
 		this.logger = logger;
@@ -23,6 +25,7 @@ export default class App {
 
 		this.vehicleRepository = vehicleRepository;
 		this.vehicleGateway = vehicleGateway;
+		this.vehicleHandler = vehicleHandler;
 		this.userRepository = userRepository;
 		this.dongleRepository = dongleRepository;
 		this.status = 'STOPPED';
@@ -80,6 +83,16 @@ export default class App {
 				});
 			}),
 			new Promise((response, reject) => {
+				this.vehicleHandler.start((err) => {
+					if (err) {
+						reject(err);
+					} else {
+						this.logger.info('Started Vehicle Handler');
+						response('Started Vehicle handler');
+					}
+				});
+			}),
+			new Promise((response, reject) => {
 				this.operations.start((err) => {
 					if (err) {
 						reject(err);
@@ -114,6 +127,9 @@ export default class App {
 		});
 		this.vehicleGateway.stop(() => {
 			this.logger.info('Stopped Vehicle Gateway');
+		});
+		this.vehicleHandler.stop(() => {
+			this.logger.info('Stopped Vehicle Handler');
 		});
 		this.operations.stop(() => {
 			this.logger.info('Stopped Operation Endpoints');

@@ -24,7 +24,7 @@ describe('Vehicle Gateway', () => {
 		
 		sut.start(() => {
 			assert.equal(sut.status, ServiceStatus.Started);
-			assert(sut.server.listen.calledOnce);
+			assert(sut.server.listen.calledOnce,'server listen should be callled once');
 			assert(sut.server.on.calledOnce);
 			done();
 		});

@@ -1,6 +1,6 @@
 import net from 'net';
 import uuid from 'uuid';
-import { MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
+import { MessageTypes, MessageCommands, Message } from '../common/message_bus/message_bus';
 import { Topics } from '../common/message_bus/topics';
 import HttpService from '../common/http_service';
 import BaseClass from '../common/base_class';
@@ -9,10 +9,15 @@ import Store from '../common/store/new_store_sync';
 const CRLF = '\r\n';
 
 class VehicleSession extends BaseClass {
-	constructor({ socket }) {
-		super({name: 'VehicleSession'});
+	constructor({socket ,handle}) {
+		super({ name: 'VehicleSession' });
 		this.id = uuid();
 		this.socket = socket;
+		this.socket.on('data', (data) => {
+			handle(data, (msg) => {
+				this.send(msg.payload);
+			});
+		});
 	}
 	send(message) {
 		this.socket.write(message + CRLF);
@@ -20,31 +25,28 @@ class VehicleSession extends BaseClass {
 }
 
 export default class VehicleGateway extends HttpService {
-	constructor({ messageBus, name = 'VehicleGateway', port = 3081, gatewayPort = 1974,store = new Store()}) {
+	constructor({ messageBus, name = 'VehicleGateway', port = 3081, gatewayPort = 1974, store = new Store() }) {
 		super({ messageBus, name, port });
-		this.handlers = [];
 		this.server = null;
 		this.gatewayPort = gatewayPort;
-		this.clients = [];
 		this.store = store;
-		this.server = net.createServer(this.handleNewConnection.bind(this));
+		this.server = null;
 	}
-	sendResponse(data,socket) {
-		this.sendToSocket('OK',socket);
+	handle(data,cb) {
+		const message = new Message({ topic: Topics.GATEWAY_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data, correlation: true });
+
+		this.messageBus.receiveMessageFilter(Topics.GATEWAY_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
+			cb(msg);
+		});
+		this.messageBus.sendMessage(message);
+
 	}
 	handleNewConnection(socket) {
 
-		const vehicleSession = new VehicleSession(socket);
+		const vehicleSession = new VehicleSession({ socket, handle: this.handle.bind(this) });
 
-		this.store.set(vehicleSession.id,vehicleSession);
-
-		vehicleSession.send('HELLO PHEV')
-
-		socket.on('data', (data)=> {
-
-
-			this.sendResponse(data,socket);
-		});
+		this.store.set(socket.id, vehicleSession);
+		vehicleSession.send('HELLO PHEV');
 	}
 	start(done) {
 		super.start(() => {
@@ -59,6 +61,9 @@ export default class VehicleGateway extends HttpService {
 					handle: null,
 				}]);
 
+			if(this.server === null) {
+				this.server = net.createServer(this.handleNewConnection.bind(this));
+			}
 			this.server.on('error', (err) => {
 				throw err;
 			});

@@ -24,9 +24,9 @@ describe('Integration tests', () => {
 
 		app = new App();
 
-		setTimeout(() => {
-			while(app.status == 'NOT STARTED');
-		},1000);
+	//	setTimeout(() => {
+	//		while(app.status == 'NOT STARTED');
+	//	},1000);
 		const req = {
 			register: {
 				user: {
@@ -92,7 +92,7 @@ describe('Integration tests', () => {
 			});
 		});
 	});
-	describe.skip('Wifi details', () => {
+	describe('Wifi details', () => {
 		it('Should get SSID', (done) => {
 			client.write(eol('SSID'), () => {
 				client.once('data', (data) => {

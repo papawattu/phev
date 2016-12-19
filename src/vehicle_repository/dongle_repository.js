@@ -62,18 +62,18 @@ export default class DongleService extends HttpService {
 		return this.store.getAll(filter);
 	}
 	addDongle(dongle) {
-		this.logger.debug('Call to add new dongle ' + dongle.dongle.id + ' ' + JSON.stringify(dongle));
-		Joi.validate(dongle.dongle, DongleSchema, (err, value) => {
-			if (err) {
-				this.logger.error('Add dongle validation error ' + err + ' value ' + value);
-				throw err;
+		this.logger.debug('Call to add new dongle ' + dongle.id + ' ' + JSON.stringify(dongle));
+	//	Joi.validate(dongle.dongle, DongleSchema, (err, value) => {
+	//		if (err) {
+	//			this.logger.error('Add dongle validation error ' + err + ' value ' + value);
+	//			throw err;
+	//		}
+			if (this.store.has(dongle.id)) {
+				this.logger.error('Dongle already exists ' + dongle.id);
+				throw new Error('Dongle already exists ' + dongle.id);
 			}
-			if (this.store.has(dongle.dongle.id)) {
-				this.logger.error('Dongle already exists ' + dongle.dongle.id);
-				throw new Error('Dongle already exists ' + dongle.dongle.id);
-			}
-			this.store.set(dongle.dongle.id, dongle);
+			this.store.set(dongle.id, dongle);
 			return;
-		});
+	//	});
 	}
 }

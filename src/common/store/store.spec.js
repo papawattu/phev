@@ -62,7 +62,7 @@ describe('Store getFilter', () => {
 		const store = new Store();
 		store.set('filtertest1',testObj2);
 		store.set('filtertest2',testObj2);
-		assert.deepEqual(store.getWithFilter({key1: 'key1'}),[["filtertest1",{"key1":"key1","key2":"key2"}],["filtertest2",{"key1":"key1","key2":"key2"}]]);
+		assert.deepEqual(store.getWithFilter({key1: 'key1'}),[['filtertest1',{'key1':'key1','key2':'key2'}],['filtertest2',{'key1':'key1','key2':'key2'}]]);
 
 	});
 	it('should get empty array back when filtered value not found', () => {

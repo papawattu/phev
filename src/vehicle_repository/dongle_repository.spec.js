@@ -15,11 +15,11 @@ const sut = new DongleRepository({ logger: logger, messageBus: messageBus,port: 
 describe('Dongle Repository register', () => {
 	it('Should register dongle ID', () => {
 		sut.addDongle(Dongle);
-		assert.deepEqual(sut.getDongle(Dongle.dongle.id),Dongle,'Should be equal to ' + JSON.stringify(Dongle) + ' is ' + JSON.stringify(sut.getDongle(Dongle.dongle.id)));
+		assert.deepEqual(sut.getDongle(Dongle.id),Dongle,'Should be equal to ' + JSON.stringify(Dongle) + ' is ' + JSON.stringify(sut.getDongle(Dongle.id)));
 	});
 	it('Should register more than one dongle', () => {
 		sut.addDongle(Dongle2);
-		assert.deepEqual(sut.getDongle(Dongle2.dongle.id),Dongle2);
+		assert.deepEqual(sut.getDongle(Dongle2.id),Dongle2);
 	});
 	it('Should not register same dongle twice', () => {
 		assert.throws((() => { sut.addDongle(Dongle2); }),'Dongle already exists');
@@ -33,7 +33,7 @@ describe('Dongle message bus', () => {
 		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {
-		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Dongle4.dongle.id, correlation: true });
+		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Dongle4.id, correlation: true });
 		sut.addDongle(Dongle4);
 		
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {

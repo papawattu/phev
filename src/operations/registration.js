@@ -35,7 +35,7 @@ export default class Registration extends HttpService {
 	}
 	createUser(user) {
 		this.logger.debug(`createUser : ${JSON.stringify(user)}`);
-		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { user: user }, correlation: true });
+		const message = new Message({ topic: Topics.USER_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: user, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.USER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {
@@ -51,7 +51,7 @@ export default class Registration extends HttpService {
 	}
 	createVehicle(vehicle) {
 		this.logger.debug(`createVehicle : ${JSON.stringify(vehicle)}`);
-		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { vehicle: vehicle }, correlation: true });
+		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: vehicle, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {
@@ -67,7 +67,7 @@ export default class Registration extends HttpService {
 	}
 	createDevice(dongleId, vin) {
 		this.logger.debug(`createDevice id: ${dongleId} vin: ${vin}`);
-		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { dongle: { id: dongleId, vin: vin } }, correlation: true });
+		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: { id: dongleId, vin: vin }, correlation: true });
 		const response = new Promise((resolve, reject) => {
 			this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
 				if (data.error === null) {

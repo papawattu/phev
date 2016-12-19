@@ -15,9 +15,9 @@ export default class Store {
 		for(let [key, value] of this.elements.entries()) {
 			console.log('key ' + key + ' value ' + JSON.stringify(value) + ' filter ' + JSON.stringify(filter));
 			if(keys.every(e => {
-						console.log('value[e] ' + value[e] + ' filter[e] ' + filter[e] + ' e ' + e);
-						return value[e] === filter[e]
-					})) {
+				console.log('value[e] ' + value[e] + ' filter[e] ' + filter[e] + ' e ' + e);
+				return value[e] === filter[e];
+			})) {
 				result.set(key,value);
 				console.log('result ' + JSON.stringify(result));
 			}

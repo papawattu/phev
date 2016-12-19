@@ -65,17 +65,17 @@ export default class UserRepository extends HttpService {
 	}
 	addUser(user) {
 		this.logger.debug('Call to add new user : ' + user.username + ' ' + JSON.stringify(user));
-		Joi.validate(user.user, UserSchema, (err, value) => {
+		/*Joi.validate(user, null, (err, value) => {
 			if (err) {
 				this.logger.error('Add user validation error ' + err + ' value ' + value);
 				throw err;
 			}
-			if (this.store.has(user.user.username)) {
-				this.logger.error('Username already exists : ' + user.user.username);
-				throw new Error('Username already exists : ' + user.user.username);
+		*/	if (this.store.has(user.username)) {
+				this.logger.error('Username already exists : ' + user.username);
+				throw new Error('Username already exists : ' + user.username);
 			}
-			this.store.set(user.user.username, user);
+			this.store.set(user.username, user);
 			return;
-		});
+	//	});
 	}
 }

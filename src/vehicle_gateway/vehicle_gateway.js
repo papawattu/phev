@@ -14,7 +14,15 @@ class VehicleSession extends BaseClass {
 		this.id = uuid();
 		this.socket = socket;
 		this.socket.on('data', (data) => {
-			handle(data, (msg) => {
+			console.log('DATA ' + data);
+			const cmdLine = data.toString().split(/[, \t\r\n]+/);
+			const cmd = {
+				command: cmdLine[0],
+				args: cmdLine.shift(),
+				id: this.id,
+			}
+			
+			handle(cmd, (msg) => {
 				this.send(msg.payload);
 			});
 		});
@@ -33,7 +41,7 @@ export default class VehicleGateway extends HttpService {
 		this.server = null;
 	}
 	handle(data,cb) {
-		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data.toString(), correlation: true });
+		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data, correlation: true });
 
 		this.messageBus.receiveMessageFilter(Topics.VEHICLE_HANDLER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
 			cb(msg);
@@ -45,7 +53,7 @@ export default class VehicleGateway extends HttpService {
 
 		const vehicleSession = new VehicleSession({ socket, handle: this.handle.bind(this) });
 
-		this.store.set(socket.id, vehicleSession);
+		this.store.set(vehicleSession.id, vehicleSession);
 		vehicleSession.send('HELLO PHEV');
 	}
 	start(done) {

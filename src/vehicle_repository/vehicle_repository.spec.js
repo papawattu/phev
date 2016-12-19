@@ -18,11 +18,11 @@ describe.skip('Vehicle repository register', () => {
 
 	it('Should register VIN', () => {
 		sut.addVehicle(Vehicle);
-		assert.deepEqual(sut.getVehicle(Vehicle.vehicle.vin), Vehicle, `Expected to get : ${Vehicle} got ${sut.getVehicle(Vehicle.vehicle.vin)}`);
+		assert.deepEqual(sut.getVehicle(Vehicle.vin), Vehicle, `Expected to get : ${Vehicle} got ${sut.getVehicle(Vehicle.vin)}`);
 	});
 	it('Should register more than 1 VIN', () => {
 		sut.addVehicle(Vehicle2);
-		assert.deepEqual(sut.getVehicle(Vehicle2.vehicle.vin), Vehicle2, `Expected to get : ${Vehicle2} got ${sut.getVehicle(Vehicle2.vehicle.vin)}`);
+		assert.deepEqual(sut.getVehicle(Vehicle2.vin), Vehicle2, `Expected to get : ${Vehicle2} got ${sut.getVehicle(Vehicle2.vin)}`);
 	});
 	it('Should not allow same VIN to be registered twice', () => {
 		return assert.throws((() => { sut.addVehicle(Vehicle); }), 'VIN already registered');
@@ -31,7 +31,7 @@ describe.skip('Vehicle repository register', () => {
 
 describe.skip('Vehicle repository get vin', () => {
 	it('Should get vehicle from VIN', () => {
-		return assert.deepEqual(sut.getVehicle(Vehicle.vehicle.vin), Vehicle);
+		return assert.deepEqual(sut.getVehicle(Vehicle.vin), Vehicle);
 	});
 	it('Should not get vehicle for non registered VIN', () => {
 		return assert.isUndefined(sut.getVehicle('123456'), 'Expected return value to be undefined is ' + sut.getVehicle('123456'));
@@ -45,7 +45,7 @@ describe('Vehicle message bus', () => {
 		sut.stop(done);
 	});
 	it('Should handle GET command', (done) => {
-		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Vehicle.vehicle.vin, correlation: true });
+		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Vehicle.vin, correlation: true });
 		sut.addVehicle(Vehicle);
 		
 		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {

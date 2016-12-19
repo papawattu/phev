@@ -65,17 +65,17 @@ export default class VehicleRepository extends HttpService {
 	}
 	addVehicle(vehicle) {
 		this.logger.debug('Call to register vehicle ' + JSON.stringify(vehicle));
-		Joi.validate(vehicle.vehicle, VehicleSchema, (err, value) => {
-			if (err) {
-				this.logger.error('Add vehicle validation error ' + err + ' value ' + value);
-				throw err;
+//		Joi.validate(vehicle.vehicle, VehicleSchema, (err, value) => {
+//			if (err) {
+//				this.logger.error('Add vehicle validation error ' + err + ' value ' + value);
+//				throw err;
+//			}
+			if (this.store.has(vehicle.vin)) {
+				this.logger.error('VIN already exists ' + vehicle.vin);
+				throw new Error('VIN already registered ' + vehicle.vin);
 			}
-			if (this.store.has(vehicle.vehicle.vin)) {
-				this.logger.error('VIN already exists ' + vehicle.vehicle.vin);
-				throw new Error('VIN already registered ' + vehicle.vehicle.vin);
-			}
-			this.store.set(vehicle.vehicle.vin, vehicle);
+			this.store.set(vehicle.vin, vehicle);
 			return;
-		});
+	//	});
 	}
 }

@@ -56,74 +56,54 @@ export const register3 = {
 	}
 };
 export const User1 = {
-	user: {
-		firstName: 'Jamie',
-		lastName: 'Nuttall',
-		username: 'papawattu',
-		password: 'Pa55word!',
-		email: 'jamie@me.com',
-	}
+	firstName: 'Jamie',
+	lastName: 'Nuttall',
+	username: 'papawattu',
+	password: 'Pa55word!',
+	email: 'jamie@me.com',
 };
 export const User2 = {
-	user: {
-		firstName: 'Jamie',
-		lastName: 'Nuttall',
-		username: 'papawattu2',
-		password: 'Pa55word!',
-		email: 'jamie@me.com',
-	}
+	firstName: 'Jamie',
+	lastName: 'Nuttall',
+	username: 'papawattu2',
+	password: 'Pa55word!',
+	email: 'jamie@me.com',
 };
 export const User3 = {
-	user: {
-		firstName: 'Jamie',
-		lastName: 'Nuttall',
-		username: 'papawattu3',
-		password: 'Pa55word!',
-		email: 'jamie@me.com',
-	}
+	firstName: 'Jamie',
+	lastName: 'Nuttall',
+	username: 'papawattu3',
+	password: 'Pa55word!',
+	email: 'jamie@me.com',
 };
 export const Vehicle = {
-	vehicle: {
-		ssid: 'REMOTE123456',
-		password: 'qwertyuiop',
-		vin: 'VIN1234',
-	},
+	ssid: 'REMOTE123456',
+	password: 'qwertyuiop',
+	vin: 'VIN1234',
 };
 export const Vehicle2 = {
-	vehicle: {
-		ssid: 'REMOTE123456',
-		password: 'qwertyuiop',
-		vin: 'VIN5678',
-	},
+	ssid: 'REMOTE123456',
+	password: 'qwertyuiop',
+	vin: 'VIN5678',
 };
 export const Vehicle3 = {
-	vehicle: {
-		ssid: 'REMOTE123456',
-		password: 'qwertyuiop',
-		vin: 'VIN5678abc',
-	},
+	ssid: 'REMOTE123456',
+	password: 'qwertyuiop',
+	vin: 'VIN5678abc',
 };
 export const Dongle = {
-	dongle: {
-		id: '12345',
-		vin: 'VIN1234',
-	}
+	id: '12345',
+	vin: 'VIN1234',
 };
 export const Dongle2 = {
-	dongle: {
-		id: '54321',
-		vin: 'VIN1236',
-	}
+	id: '54321',
+	vin: 'VIN1236',
 };
 export const Dongle3 = {
-	dongle: {
-		id: '12345abc',
-		vin: 'VIN1234abc',
-	}
+	id: '12345abc',
+	vin: 'VIN1234abc',
 };
 export const Dongle4 = {
-	dongle: {
-		id: '12345abcdef',
-		vin: 'VIN1234abc',
-	}
+	id: '12345abcdef',
+	vin: 'VIN1234abc',
 };

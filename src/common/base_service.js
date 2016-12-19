@@ -28,16 +28,29 @@ export default class BaseService extends BaseClass {
 					this.logger.error(this.name + ' register message handler validation failed ' + err);
 					replyMessage.error = err;
 				} else {
-					try {
-						replyMessage.payload =
-							commands.find(e => e.name === message.command)
-								.handle.call(this, message.payload);
-					} catch (err) {
-						this.logger.error(this.name + ' register message handler command failed ' + err);
-						replyMessage.error = err;
+					const cmd = commands.find(e => e.name === message.command);
+					if (cmd.async) {
+						console.log('cmd async ' + JSON.stringify(cmd) + ' payload ' + message.payload + ' string ' + typeof message.payload); 
+					
+						cmd.handle.call(this,message.payload, (data) => {
+								console.log('data ' + data);
+								replyMessage.payload = data;
+								this.messageBus.sendMessage(replyMessage);
+							});
+					} else {
+						console.log('cmd sync ' + JSON.stringify(cmd)); 
+					
+						try {
+							replyMessage.payload =
+								commands.find(e => e.name === message.command)
+									.handle.call(this, message.payload);
+						} catch (err) {
+							this.logger.error(this.name + ' register message handler command failed ' + err);
+							replyMessage.error = err;
+						}
+						this.messageBus.sendMessage(replyMessage);
 					}
 				}
-				this.messageBus.sendMessage(replyMessage);
 			});
 		});
 	}

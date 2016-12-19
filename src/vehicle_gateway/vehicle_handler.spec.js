@@ -18,7 +18,14 @@ describe('Vehicle Handler', () => {
 		});
 	});
 	it('Should handle connect',() => {
-		assert.equal(sut.handle('CONNECT 12345'),'OK');
+		sut.handle('CONNECT 12345',(response) => {
+			assert.equal(response,'OK');
+		});
+	});
+	it('Should handle connect',() => {
+		sut.handle('CONNECT 123455',(response) => {
+			assert.equal(response,'NOT REGISTERED');
+		});
 	});
 	it.skip('Should handle get SSID',() => {
 		assert.equal(sut.handle('SSID'),'ssid');

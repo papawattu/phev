@@ -7,6 +7,7 @@ Mocks.messageBus.start = sinon.stub();
 Mocks.messageBus.stop = sinon.stub();
 Mocks.messageBus.sendMessage = sinon.stub();
 Mocks.messageBus.subscribe = sinon.stub();
+Mocks.messageBus.receiveMessageFilter = sinon.stub();
 
 Mocks.operations = {};
 Mocks.operations.start = sinon.stub().yields();

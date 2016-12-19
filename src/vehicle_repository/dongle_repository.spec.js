@@ -42,6 +42,15 @@ describe('Dongle message bus', () => {
 		});
 		messageBus.sendMessage(message);
 	});
+	it('Should handle dongle not found ', (done) => {
+		const message = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: 'notfound', correlation: true });
+		
+		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
+			assert.isUndefined(data.payload,`Expected ${data.payload} to be undefined`);
+			done();
+		});
+		messageBus.sendMessage(message);
+	});
 	it('Should handle ADD command', (done) => {
 		const addMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: Dongle3, correlation: true });
 		messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: addMessage.correlationId, type: MessageTypes.Response }, (data) => {

@@ -33,9 +33,9 @@ export default class VehicleGateway extends HttpService {
 		this.server = null;
 	}
 	handle(data,cb) {
-		const message = new Message({ topic: Topics.GATEWAY_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data, correlation: true });
+		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data.toString(), correlation: true });
 
-		this.messageBus.receiveMessageFilter(Topics.GATEWAY_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
+		this.messageBus.receiveMessageFilter(Topics.VEHICLE_HANDLER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
 			cb(msg);
 		});
 		this.messageBus.sendMessage(message);
@@ -50,16 +50,17 @@ export default class VehicleGateway extends HttpService {
 	}
 	start(done) {
 		super.start(() => {
-			this.registerMessageHandler(Topics.GATEWAY_TOPIC, null, { type: MessageTypes.Request },
+			/*this.registerMessageHandler(Topics.GATEWAY_TOPIC, null, { type: MessageTypes.Request },
 				[{
-					name: MessageCommands.Get,
+					name: MessageCommands.NoOperation,
 					numArgs: 1,
 					handle: null,
+					async: true,
 				}, {
 					name: MessageCommands.Add,
 					numArgs: 1,
 					handle: null,
-				}]);
+				}]);*/
 
 			if(this.server === null) {
 				this.server = net.createServer(this.handleNewConnection.bind(this));

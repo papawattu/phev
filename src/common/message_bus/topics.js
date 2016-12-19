@@ -5,4 +5,5 @@ export const Topics = {
 	VEHICLE_TOPIC: 'vehicle',
 	DONGLE_TOPIC: 'dongle',
 	GATEWAY_TOPIC: 'gateway',
+	VEHICLE_HANDLER_TOPIC: 'vehicle_handler',
 };

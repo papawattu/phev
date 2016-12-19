@@ -3,21 +3,59 @@ import { logger } from '../lib/common/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import net from 'net';
+import * as request from 'superagent';
+import * as status from 'http-status';
 import App from '../lib/app';
 
+const PROTOCOL = 'http';
+const HTTP_PORT = '3030';
 const assert = chai.use(chaiAsPromised).assert;
 
 let app = null;
 
-const HOST = '127.0.0.1';
+const HOST = 'localhost';
 const PORT = '1974';
 const EOL = '\r\n';
 
 const eol = (str) => str + EOL;
 const client = new net.Socket();
 describe('Integration tests', () => {
-	before(() => {
-		app = new App();		
+	before((done) => {
+
+		app = new App();
+
+		setTimeout(() => {
+			while(app.status == 'NOT STARTED');
+		},1000);
+		const req = {
+			register: {
+				user: {
+					firstName: 'Jamie',
+					lastName: 'Nuttall',
+					username: 'papawattu',
+					password: 'Pa55word!',
+					email: 'jamie@me.com',
+				},
+				vehicle: {
+					ssid: 'REMOTE123456',
+					password: 'qwertyuiop',
+					vin: 'VIN1234',
+				},
+				dongle: {
+					id: '12345',
+				}
+			}
+		};
+		request.post(PROTOCOL + '://' + HOST + ':' + HTTP_PORT + '/registration')
+			.send(req)
+			.type('application/json')
+			.accept('json')
+			.end(function (err, res) {
+				assert.ifError(err);
+				assert.equal(res.headers.location, '/users/papawattu');
+				assert.equal(res.status, status.CREATED);
+				return done();
+			});
 	});
 	after((done) => {
 		app.stop(done);
@@ -43,34 +81,12 @@ describe('Integration tests', () => {
 				});
 			});
 		});
-		it.skip('Should connect and return NOT registeed, if dongle has not been registered', (done) => {
-			client.write(eol('CONNECT 12345abc'), () => {
+		it('Should connect but return NOT REGISTERED', (done) => {
+			client.write(eol('CONNECT notregistered'), () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.length > 0);
 					assert(data.toString() === eol('NOT REGISTERED'), 'Return string should be NOT REGISTERED is ' + data.toString());
-					done();
-				});
-			});
-		});
-	});
-	describe.skip('Register device', () => {
-		it('Should register vehicle when passed a device', (done) => {
-			client.write(eol('REGISTER 123456'), () => {
-				client.once('data', (data) => {
-					logger.debug('Received: ' + data);
-					assert(data.length > 0);
-					assert(data.toString() === eol('OK'), 'Return string should be OK is ' + data);
-					done();
-				});
-			});
-		});
-		it('Should not allow device to be registered twice', (done) => {
-			client.write(eol('REGISTER 123456'), () => {
-				client.once('data', (data) => {
-					logger.debug('Received: ' + data);
-					assert(data.length > 0);
-					assert(data.toString() === eol('ERROR'), 'Return string should be ERROR is ' + data);
 					done();
 				});
 			});

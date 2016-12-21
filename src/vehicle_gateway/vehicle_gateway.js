@@ -16,13 +16,7 @@ class VehicleSession extends BaseClass {
 		this.socket = socket;
 		this.socket.on('data', (data) => {
 			const cmdLine = data.toString().split(/[, \t\r\n]+/);
-			const cmd = {
-				command: cmdLine[0],
-				args: cmdLine.shift(),
-				id: this.id,
-			}
-			
-			handle(cmd, (msg) => {
+			handle({ id: this.id, command: cmdLine[0], args: cmdLine.shift() }, (msg) => {
 				this.send(msg.payload);
 			});
 		});
@@ -40,8 +34,8 @@ export default class VehicleGateway extends HttpService {
 		this.store = store;
 		this.server = null;
 	}
-	handle(data,cb) {
-		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: data, correlation: true });
+	handle(cmd,cb) {
+		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: cmd, correlation: true });
 
 		this.messageBus.receiveMessageFilter(Topics.VEHICLE_HANDLER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
 			cb(msg);

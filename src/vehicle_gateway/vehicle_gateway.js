@@ -12,9 +12,9 @@ class VehicleSession extends BaseClass {
 	constructor({socket ,handle}) {
 		super({ name: 'VehicleSession' });
 		this.id = uuid();
+		this.dongleId = null;
 		this.socket = socket;
 		this.socket.on('data', (data) => {
-			console.log('DATA ' + data);
 			const cmdLine = data.toString().split(/[, \t\r\n]+/);
 			const cmd = {
 				command: cmdLine[0],
@@ -58,9 +58,9 @@ export default class VehicleGateway extends HttpService {
 	}
 	start(done) {
 		super.start(() => {
-			/*this.registerMessageHandler(Topics.GATEWAY_TOPIC, null, { type: MessageTypes.Request },
+			this.registerMessageHandler(Topics.GATEWAY_TOPIC, null, { type: MessageTypes.Request },
 				[{
-					name: MessageCommands.NoOperation,
+					name: MessageCommands.Get,
 					numArgs: 1,
 					handle: null,
 					async: true,
@@ -68,7 +68,7 @@ export default class VehicleGateway extends HttpService {
 					name: MessageCommands.Add,
 					numArgs: 1,
 					handle: null,
-				}]);*/
+				}]);
 
 			if(this.server === null) {
 				this.server = net.createServer(this.handleNewConnection.bind(this));

@@ -7,14 +7,20 @@ import { Mocks } from '../common/test/mocks';
 import VehicleGateway from './vehicle_gateway';
 
 const messageBus = Mocks.messageBus;
+const store = Mocks.store;
 const assert = chai.use(chaiAsPromised).assert;
-const sut = new VehicleGateway({ name: 'default', messageBus });
+const sut = new VehicleGateway({ name: 'default', messageBus, store: store });
 
 /*Mocks = {};
 Mocks.httpService = {};
 Mocks.httpService.start = sinon.stub().yields();
 Mocks.httpService.stop = sinon.stub().yields();
 */
+
+const socket = {};
+socket.on = sinon.stub();
+socket.write = sinon.stub();
+		
 describe('Vehicle Gateway', () => {
 	it('Should start', (done) => {
 		sut.server = {} ;
@@ -24,13 +30,18 @@ describe('Vehicle Gateway', () => {
 		
 		sut.start(() => {
 			assert.equal(sut.status, ServiceStatus.Started);
-			assert(sut.server.listen.calledOnce,'server listen should be callled once');
-			assert(sut.server.on.calledOnce);
 			done();
 		});
 	});
-	it('Should start', (done) => {
-		done();
+	it('Should accept connections', () => {
+		assert(sut.server.listen.calledOnce,'server listen should be callled once');
+	});
+	it('Should receive data', () => {
+		assert(sut.server.on.calledOnce);
+	});
+	it('Should create new session', () => {
+		sut.handleNewConnection(socket);
+		assert(sut.store.set.calledOnce);
 	});
 	it('Should stop', (done) => {
 		sut.server = {} ;

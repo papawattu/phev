@@ -36,3 +36,9 @@ Mocks.userRepository.stop = sinon.stub().yields();
 Mocks.httpService = {};
 Mocks.httpService.start = sinon.stub().yields();
 Mocks.httpService.stop = sinon.stub().yields();
+
+Mocks.store = {};
+Mocks.store.get = sinon.stub();
+Mocks.store.set = sinon.stub();
+Mocks.store.del = sinon.stub();
+Mocks.store.getAll = sinon.stub();

@@ -51,15 +51,18 @@ export default class VehicleHandler extends BaseService {
         super.stop(done);
     }*/
 	handle(commandLine,cb) {
-		console.log('cmd line ' + JSON.stringify(commandLine));
 		this._findCommand(commandLine.command).handle.call(this,commandLine,cb);
 	}
 	connect(cmd,cb) {
-		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: cmd.command, correlation: true });
+		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: cmd.args[0], correlation: true });
 		this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: dongleMessage.correlationId, type: MessageTypes.Response }, (data) => {
 			if (data.payload !== undefined) {
-				
-				cb('OK');
+				const sessionMessage = new Message({ topic: Topics.GATEWAY_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: cmd.id, correlation: true });
+		
+				this.messageBus.receiveMessageFilter(Topics.GATEWAY_TOPIC, { correlationId: sessionMessage.correlationId, type: MessageTypes.Response }, () => {
+					cb('OK');
+				});
+				this.messageBus.sendMessage(sessionMessage);
 			} else {
 				cb('NOT REGISTERED');
 			}

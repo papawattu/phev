@@ -47,6 +47,15 @@ describe('Vehicle Gateway', () => {
 		assert(socket.write.calledOnce);
 		assert(socket.write.calledWith('HELLO PHEV\r\n'));
 	});
+	it('Should send message', (done)=> {
+		sut.handle({},() => {	
+
+			done();	
+		});
+		assert(messageBus.sendMessage.calledOnce);
+		assert(messageBus.receiveMessageFilter.calledOnce);
+		//assert(socket.write.calledWith('HELLO PHEV\r\n'));
+	});
 	it('Should stop', (done) => {
 		sut.server = {} ;
 		sut.server.close = sinon.stub().yields();

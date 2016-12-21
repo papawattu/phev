@@ -17,14 +17,25 @@ describe('Vehicle Handler', () => {
 			done();
 		});
 	});
-	it.skip('Should handle connect',() => {
-		sut.handle('CONNECT 12345',(response) => {
+	it('Should handle connect',(done) => {
+		Mocks.messageBus.receiveMessageFilter = sinon.stub().yields({payload: '{}'});
+		Mocks.messageBus.sendMessage.reset();
+		sut.handle({command: 'CONNECT', args: ['12345']},(response) => {
 			assert.equal(response,'OK');
+			assert(Mocks.messageBus.receiveMessageFilter.calledTwice);
+			//assert(Mocks.messageBus.sendMessage.calledTwice);
+			//console.log(Mocks.messageBus.sendMessage);
+			done();
 		});
 	});
-	it.skip('Should handle connect',() => {
-		sut.handle('CONNECT 123455',(response) => {
+	it('Should handle connect',(done) => {
+		Mocks.messageBus.receiveMessageFilter = sinon.stub().yields({payload: undefined});
+		sut.handle({command: 'CONNECT', args: ['12345']},(response) => {
 			assert.equal(response,'NOT REGISTERED');
+			assert(Mocks.messageBus.receiveMessageFilter.calledOnce);
+//			assert(Mocks.messageBus.sendMessage.calledOnce);
+			
+			done();
 		});
 	});
 	it.skip('Should handle get SSID',() => {

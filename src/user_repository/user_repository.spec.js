@@ -34,9 +34,6 @@ describe('User service get user Id', () => {
 	it('Should not get user for non registered User Id', () => {
 		return assert.isUndefined(sut.getUser('nonuser'));
 	});
-	it.skip('Should get all users', () => {
-		return assert.deepEqual(...sut.getUsers(), ['papawattu', User1.user], `Expected to get : ${User1} but got ${[...sut.getUsers()]}`);
-	});
 });
 describe('User service message bus', () => {
 	before((done) => {

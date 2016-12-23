@@ -14,7 +14,7 @@ export default class VehicleRepository extends HttpService {
 	}
 	start(done) {
 		super.start(() => {
-			this.registerMessageHandler(Topics.VEHICLE_TOPIC, VehicleSchema, { type: MessageTypes.Request },
+			this.registerMessageHandler(Topics.VEHICLE_TOPIC, null, { type: MessageTypes.Request },
 				[{
 					name: MessageCommands.Get,
 					numArgs: 1,

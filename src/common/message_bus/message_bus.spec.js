@@ -183,6 +183,18 @@ describe('Message bus', () => {
 			done();
 		});
 	});
+	it('Should send and receive reply',(done) => {
+		messageBus.subscribe('topic',{type: MessageTypes.Request},(data) => {
+			const message = Message.replyTo(data);
+			message.payload = data.payload; 
+			messageBus.sendMessage(message);
+		});
+		
+		messageBus.sendAndReceiveMessage({topic: 'topic',payload: 'Hello', command: 'NOOP'},(data) => {
+			assert.equal(data.payload,'Hello');
+			done();
+		});
+	});
 	it('Should stop and be in stopped state', () => {
 		messageBus.stop();
 		assert.equal(messageBus.status,MessageBusStatus.Stopped);

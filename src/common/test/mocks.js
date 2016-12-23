@@ -8,6 +8,8 @@ Mocks.messageBus.stop = sinon.stub();
 Mocks.messageBus.sendMessage = sinon.stub();
 Mocks.messageBus.subscribe = sinon.stub();
 Mocks.messageBus.receiveMessageFilter = sinon.stub().yields();
+Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields();
+Mocks.messageBus.registerMessageHandler = sinon.stub().yields();
 
 Mocks.operations = {};
 Mocks.operations.start = sinon.stub().yields();

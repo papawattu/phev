@@ -107,4 +107,18 @@ export class MessageBus extends BaseClass {
 		this.listeners.push({topic: topic, filter: f, callback: callback});
 		
 	}
+	sendAndReceiveMessage({topic,payload,command = MessageCommands.NoOperation}, callback) {
+		this.errorIfNotStarted();
+		
+		this.logger.debug('MESSAGE BUS ' + this.name  + ' : sendAndReceiveMessage topic ' + topic + ' Calling callback');
+		
+		const message = new Message({ topic :topic,type: MessageTypes.Request,payload: payload,command: command, correlation: true});
+		
+		this.receiveMessageFilter(topic,{type: MessageTypes.Response,command: command, correlationId: message.correlationId}, (data) => {
+			callback(data);
+		});
+		
+		this.sendMessage(message);
+
+	}
 }

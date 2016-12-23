@@ -8,7 +8,7 @@ import VehicleHander from './vehicle_handler';
 
 const messageBus = Mocks.messageBus;
 const assert = chai.use(chaiAsPromised).assert;
-const sut = new VehicleHander({ name: 'default', messageBus });
+const sut = new VehicleHander({ name: 'default', messageBus: messageBus });
 
 describe('Vehicle Handler', () => {
 	it('Should start', (done) => {
@@ -18,23 +18,21 @@ describe('Vehicle Handler', () => {
 		});
 	});
 	it('Should handle connect',(done) => {
-		Mocks.messageBus.receiveMessageFilter = sinon.stub().yields({payload: '{}'});
 		Mocks.messageBus.sendMessage.reset();
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({payload: '{}'});
+		//Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({payload: 'OK'});
+			
 		sut.handle({command: 'CONNECT', args: ['12345']},(response) => {
 			assert.equal(response,'OK');
-			assert(Mocks.messageBus.receiveMessageFilter.calledTwice);
-			//assert(Mocks.messageBus.sendMessage.calledTwice);
-			//console.log(Mocks.messageBus.sendMessage);
+			assert(Mocks.messageBus.sendAndReceiveMessage.calledTwice);
 			done();
 		});
 	});
-	it('Should handle connect',(done) => {
-		Mocks.messageBus.receiveMessageFilter = sinon.stub().yields({payload: undefined});
-		sut.handle({command: 'CONNECT', args: ['12345']},(response) => {
+	it('Should handle not registered',(done) => {
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({payload: undefined});
+		sut.handle({command: 'CONNECT', args: ['12345yy']},(response) => {
 			assert.equal(response,'NOT REGISTERED');
-			assert(Mocks.messageBus.receiveMessageFilter.calledOnce);
-//			assert(Mocks.messageBus.sendMessage.calledOnce);
-			
+			assert(Mocks.messageBus.sendAndReceiveMessage.calledOnce);
 			done();
 		});
 	});

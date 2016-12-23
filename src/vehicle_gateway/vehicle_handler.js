@@ -54,20 +54,15 @@ export default class VehicleHandler extends BaseService {
 		this._findCommand(commandLine.command).handle.call(this,commandLine,cb);
 	}
 	connect(cmd,cb) {
-		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: cmd.args[0], correlation: true });
-		this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: dongleMessage.correlationId, type: MessageTypes.Response }, (data) => {
+		this.messageBus.sendAndReceiveMessage({topic: Topics.DONGLE_TOPIC, payload: cmd.args[0], command: MessageCommands.Get},(data) => {
 			if (data.payload !== undefined) {
-				const sessionMessage = new Message({ topic: Topics.GATEWAY_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: cmd.id, correlation: true });
-		
-				this.messageBus.receiveMessageFilter(Topics.GATEWAY_TOPIC, { correlationId: sessionMessage.correlationId, type: MessageTypes.Response }, () => {
+				this.messageBus.sendAndReceiveMessage({topic: Topics.GATEWAY_TOPIC, payload: cmd.id, command: MessageCommands.Add},(reply) => {		
 					cb('OK');
 				});
-				this.messageBus.sendMessage(sessionMessage);
 			} else {
 				cb('NOT REGISTERED');
 			}
 		});
-		this.messageBus.sendMessage(dongleMessage);
 	}
 	ssid(id,cb) {
 		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: id[1], correlation: true });

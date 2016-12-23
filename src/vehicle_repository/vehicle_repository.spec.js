@@ -2,19 +2,19 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import VehicleRepository from './vehicle_repository';
-import { MessageBus, Message, MessageTypes, MessageCommands } from '../common/message_bus';
+import { Message, MessageTypes, MessageCommands } from '../common/message_bus';
 import { logger } from '../common/logger';
 import { Vehicle, Vehicle2, Vehicle3 } from '../common/data/data';
 import { Topics } from '../common/message_bus/topics';
+import { Mocks } from '../common/test/mocks';
 
 const assert = chai.use(chaiAsPromised).assert;
-const messageBus = new MessageBus({ logger });
-messageBus.start();
+const messageBus = Mocks.messageBus;
 const sut = new VehicleRepository({ logger: logger, messageBus: messageBus, port: 3034 });
 
 chai.use(chaiAsPromised);
 
-describe.skip('Vehicle repository register', () => {
+describe('Vehicle repository register', () => {
 
 	it('Should register VIN', () => {
 		sut.addVehicle(Vehicle);
@@ -29,7 +29,7 @@ describe.skip('Vehicle repository register', () => {
 	});
 });
 
-describe.skip('Vehicle repository get vin', () => {
+describe('Vehicle repository get vin', () => {
 	it('Should get vehicle from VIN', () => {
 		return assert.deepEqual(sut.getVehicle(Vehicle.vin), Vehicle);
 	});
@@ -39,27 +39,13 @@ describe.skip('Vehicle repository get vin', () => {
 });
 describe('Vehicle message bus', () => {
 	before((done)=> {
+		Mocks.messageBus.subscribe.reset();
 		sut.start(done);
 	});
 	after((done) => {
 		sut.stop(done);
 	});
-	it('Should handle GET command', (done) => {
-		const message = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: Vehicle.vin, correlation: true });
-		sut.addVehicle(Vehicle);
-		
-		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (data) => {
-			assert.deepEqual(data.payload, Vehicle,`Expected ${data.payload} to be ${JSON.stringify(Vehicle)}`);
-			done();
-		});
-		messageBus.sendMessage(message);
-	});
-	it('Should handle ADD command', (done) => {
-		const addMessage = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Add, payload: Vehicle3, correlation: true });
-		messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: addMessage.correlationId, type: MessageTypes.Response }, (data) => {
-			assert.isNull(data.error);
-			done();
-		});
-		messageBus.sendMessage(addMessage);
+	it('Should set up message handlers', () => {
+		assert(Mocks.messageBus.subscribe.calledOnce,'Should be called once' + Mocks.messageBus.subscribe.callCount);
 	});
 });

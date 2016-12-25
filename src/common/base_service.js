@@ -1,6 +1,5 @@
 import BaseClass from './base_class';
 import { Message } from './message_bus/message_bus';
-import * as Joi from 'joi';
 
 export const ServiceStatus = { Stopped: 'STOPPED', Started: 'STARTED' };
 
@@ -45,20 +44,7 @@ export default class BaseService extends BaseClass {
 	registerMessageHandler(topic, schema, filter, commands) {
 		this.messageBus.subscribe(topic, filter, (message) => {
 			const replyMessage = Message.replyTo(message);
-			//if (schema != null) {
-			//	Joi.validate(message.payload, schema, (err) => {
-			//		if (err) {
-			//			this.logger.error(this.name + ' register message handler validation failed ' + err);
-			//			replyMessage.error = err;
-			//			this.messageBus.sendMessage(replyMessage);
-			//		} else {
-						this.execute(commands,message,replyMessage);
-			//		}
-			//	});
-
-	//		} else {
-	//			this.execute(commands,message,replyMessage);
-	//		}
+			this.execute(commands,message,replyMessage);
 		});
 	}
 }

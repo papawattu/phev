@@ -2,12 +2,14 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import chaiDatetime from 'chai-datetime';
 import {MessageBus,Message,MessageTypes,MessageBusStatus,MessageCommands} from './message_bus';
 import {Topics} from './topics';
 import {logger} from '../logger';
 
 const assert = chai.assert;
 chai.use(chaiAsPromised);
+chai.use(chaiDatetime);
 
 const messageBus = new MessageBus({name: 'test',logger: logger});
 
@@ -28,6 +30,10 @@ describe('Messages', () => {
 	it('Should have an id as a string', () => {
 		const message = new Message({ topic :'topic', payload: 'Hello'});
 		assert.isString(message.id);
+	});
+	it('Should have a created timestamp', () => {
+		const message = new Message({ topic :'topic', payload: 'Hello'});
+		assert.isDefined(message.createdTimestamp);
 	});
 	it('Should create a reply message', () => {
 		const message = new Message({ topic :'topic', payload: 'Hello',correlation: true});
@@ -70,6 +76,11 @@ describe('Message bus', () => {
 			done();
 		});
 		messageBus.sendMessage(message);
+	});
+	it('Should have sent time', () => {
+		const message = new Message();
+		messageBus.sendMessage(message);
+		assert.isDefined(message.sentTimestamp);
 	});
 	it('Should send and receive more than one message', (done) => {
 		const message = new Message({ topic :'topic',payload: 'Hello'});

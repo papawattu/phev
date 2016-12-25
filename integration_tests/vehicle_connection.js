@@ -81,7 +81,7 @@ describe('Integration tests', () => {
 				});
 			});
 		});
-		it('Should connect but return NOT REGISTERED', (done) => {
+		it.skip('Should connect but return NOT REGISTERED', (done) => {
 			client.write(eol('CONNECT notregistered'), () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
@@ -98,7 +98,7 @@ describe('Integration tests', () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.toString().length > 0, 'SSID should be returned  : ' + data.toString());
-					assert(data.toString() === eol('SSID123'), 'SSID should be SSID123 is ' + data.toString());
+					assert(data.toString() === eol('SSID SSID123'), 'SSID should be SSID123 is ' + data.toString());
 					done();
 				});
 			});

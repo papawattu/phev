@@ -14,15 +14,19 @@ class VehicleSession extends BaseClass {
 		this.id = uuid();
 		this.dongleId = null;
 		this.socket = socket;
+		this.connected = false;
 		this.socket.on('data', (data) => {
-			const cmdLine = data.toString().split(/[, \t\r\n]+/);
-			handle({ id: this.id, command: cmdLine[0], args: cmdLine.shift() }, (msg) => {
+			const cmdLine = data.toString().split(/[, \t\r\n]+/);	
+			handle({ id: this.id, command: cmdLine[0], args: cmdLine.slice(1) }, (msg) => {
 				this.send(msg.payload);
 			});
 		});
 	}
 	send(message) {
 		this.socket.write(message + CRLF);
+	}
+	toString() {
+		return JSON.stringify(this,['id','dongleId','connected']);
 	}
 }
 
@@ -35,20 +39,34 @@ export default class VehicleGateway extends HttpService {
 		this.server = null;
 	}
 	handle(cmd,cb) {
-		const message = new Message({ topic: Topics.VEHICLE_HANDLER_TOPIC, type: MessageTypes.Request, command: MessageCommands.NoOperation, payload: cmd, correlation: true });
-
-		this.messageBus.receiveMessageFilter(Topics.VEHICLE_HANDLER_TOPIC, { correlationId: message.correlationId, type: MessageTypes.Response }, (msg) => {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_HANDLER_TOPIC, payload: cmd, command: MessageCommands.NoOperation }, (msg) => {
 			cb(msg);
 		});
-		this.messageBus.sendMessage(message);
-
 	}
 	handleNewConnection(socket) {
 
-		const vehicleSession = new VehicleSession({ socket, handle: this.handle.bind(this) });
+		const session = new VehicleSession({ socket, handle: this.handle.bind(this) });
 
-		this.store.set(vehicleSession.id, vehicleSession);
-		vehicleSession.send('HELLO PHEV');
+		this.store.set(session.id, {id: session.id,connected: false,dongleId: null});
+		session.send('HELLO PHEV');
+		
+		return session;
+	}
+	getSession(id) {
+		return this.store.get(id);
+	}
+	validateSession(data) {
+		const session = this.store.get(data.sessionId);
+		
+		this.logger.debug('Data : ' + JSON.stringify(data));
+		this.logger.debug('Session : ' + JSON.stringify(session));
+		
+		session.connected = true;
+		session.dongleId = data.dongleId;
+		this.store.set(data.sessionId,session);
+		this.logger.debug(JSON.stringify(session));
+		
+		return session;
 	}
 	start(done) {
 		super.start(() => {
@@ -56,12 +74,13 @@ export default class VehicleGateway extends HttpService {
 				[{
 					name: MessageCommands.Get,
 					numArgs: 1,
-					handle: null,
-					async: true,
+					handle: this.getSession,
+					async: false,
 				}, {
 					name: MessageCommands.Add,
 					numArgs: 1,
-					handle: null,
+					handle: this.validateSession,
+					async: true,
 				}]);
 
 			if(this.server === null) {

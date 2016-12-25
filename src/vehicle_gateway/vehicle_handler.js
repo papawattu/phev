@@ -50,37 +50,80 @@ export default class VehicleHandler extends BaseService {
     /*stop(done) {
         super.stop(done);
     }*/
-	handle(commandLine,cb) {
-		this._findCommand(commandLine.command).handle.call(this,commandLine,cb);
+	handle(commandLine, cb) {
+		this._findCommand(commandLine.command).handle.call(this, commandLine, cb);
 	}
-	connect(cmd,cb) {
-		this.messageBus.sendAndReceiveMessage({topic: Topics.DONGLE_TOPIC, payload: cmd.args[0], command: MessageCommands.Get},(data) => {
-			if (data.payload !== undefined) {
-				this.messageBus.sendAndReceiveMessage({topic: Topics.GATEWAY_TOPIC, payload: cmd.id, command: MessageCommands.Add},(reply) => {		
-					cb('OK');
-				});
+	registerConnection(dongle, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: dongle, command: MessageCommands.Add }, (reply) => {
+			if (reply.error === undefined) {
+				cb('OK');
 			} else {
+				cb(reply.error);
+			}
+		});
+	}
+	connect(cmd, cb) {
+		this.logger.debug('Connect dongle ' + cmd.args[0]);
+		this.getDongle(cmd.args[0], (data) => {
+			if (data !== undefined) {
+				this.logger.debug('Connect dongle found ' + data.id);
+				this.registerConnection({ sessionId: cmd.id, dongleId: data.id }, cb);
+			} else {
+				this.logger.debug('Connect dongle not found ');
 				cb('NOT REGISTERED');
 			}
 		});
 	}
-	ssid(id,cb) {
-		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: id[1], correlation: true });
-
-		this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: dongleMessage.correlationId, type: MessageTypes.Response }, (dongle) => {
-			const vehicleMessage = new Message({ topic: Topics.VEHICLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: dongle.vin, correlation: true });
-		
-			this.messageBus.receiveMessageFilter(Topics.VEHICLE_TOPIC, { correlationId: vehicleMessage.correlationId, type: MessageTypes.Response }, (vehicle) => {
-		
-			if (vehicle.payload !== undefined) {
-				cb(vehicle.ssid);
-			} else {
-				cb('NO SSID');
-			}
-			});
-			this.messageBus.sendMessage(vehicleMessage);
+	getDongle(dongleId, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.DONGLE_TOPIC, payload: dongleId, command: MessageCommands.Get }, (data) => {
+			cb(data.payload);
 		});
-		this.messageBus.sendMessage(dongleMessage);
+	}
+	getSession(sessionId, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: sessionId, command: MessageCommands.Get }, (reply) => {
+			if (reply.error === undefined) {
+				cb(reply.payload);
+			} else {
+				cb(reply.error);
+			}
+		});
+	}
+	getVehicle(vin, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_TOPIC, payload: vin, command: MessageCommands.Get }, (data) => {
+			cb(data.payload);
+		});
+	}
+	getVehicleFromDongleId(dongleId, cb) {
+		this.getDongle(dongleId, (dongle) => {
+			if (dongle !== undefined) {
+				this.logger.debug('EYE CATCHER - Found dongle ' + dongle);
+				this.getVehicle(dongle.vin, (vehicle) => cb(vehicle));
+			} else {
+				this.logger.debug('EYE CATCHER - Could not find dongle Id ' + dongleId);
+				cb(undefined);
+			}
+		});
+	}
+	ssid(cmd, cb) {
+		this.getSession(cmd.id, (session) => {
+			if (session) {
+				if (session.connected) {
+					this.getVehicleFromDongleId(session.dongleId, (vehicle) => {
+						if (vehicle !== undefined) {
+							cb('SSID ' + vehicle.ssid);
+						} else {
+							cb('ERROR');
+						}
+					});
+				} else {
+					cb('ERROR');
+				}
+			} else {
+				this.logger.error('Vehicle Handler SSID : Cannot find session for id ' + cmd.id);
+				cb('ERROR');
+			}
+		});
+
 	}
 	password(id) {
 		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: id, correlation: true });

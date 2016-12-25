@@ -9,7 +9,7 @@ import HttpService from '../common/http_service';
 export default class VehicleRepository extends HttpService {
 	constructor({messageBus, port, store = new Store() }) {
 		super({ messageBus, port, name: 'Vehicle Repository' });
-		
+
 		this.store = store;
 	}
 	start(done) {
@@ -65,17 +65,12 @@ export default class VehicleRepository extends HttpService {
 	}
 	addVehicle(vehicle) {
 		this.logger.debug('Call to register vehicle ' + JSON.stringify(vehicle));
-//		Joi.validate(vehicle.vehicle, VehicleSchema, (err, value) => {
-//			if (err) {
-//				this.logger.error('Add vehicle validation error ' + err + ' value ' + value);
-//				throw err;
-//			}
-			if (this.store.has(vehicle.vin)) {
-				this.logger.error('VIN already exists ' + vehicle.vin);
-				throw new Error('VIN already registered ' + vehicle.vin);
-			}
-			this.store.set(vehicle.vin, vehicle);
-			return;
-	//	});
+		if (this.store.has(vehicle.vin)) {
+			this.logger.error('VIN already exists ' + vehicle.vin);
+			throw new Error('VIN already registered ' + vehicle.vin);
+		}
+		this.store.set(vehicle.vin, vehicle);
+		return;
+
 	}
 }

@@ -24,7 +24,7 @@ describe('Http service', () => {
 			done();
 		});
 	});
-	it('Should register http listener', () => {
+	it.skip('Should register http listener', () => {
 		httpService.registerHttpHandler('test', {
 			get: {
 				method: () => { },
@@ -37,7 +37,7 @@ describe('Http service', () => {
 			}
 		});
 	});
-	it('Should register another http listener', () => {
+	it.skip('Should register another http listener', () => {
 		httpService.registerHttpHandler('test2', {
 			get: {
 				method: () => { },

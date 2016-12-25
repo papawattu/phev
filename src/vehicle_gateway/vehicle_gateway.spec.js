@@ -54,7 +54,15 @@ describe('Vehicle Gateway', () => {
 		});
 		assert(messageBus.sendMessage.calledOnce);
 		assert(messageBus.receiveMessageFilter.calledOnce);
-		//assert(socket.write.calledWith('HELLO PHEV\r\n'));
+	});
+	it('Should get session', ()=> {
+		Mocks.store.get.returns({});
+		assert.deepEqual(sut.getSession('1234'),{});
+	});
+	it('Should validate session', ()=> {
+		Mocks.store.get.returns({connected: false, id: 'abcdef'});
+		sut.validateSession({sessionId: 'abcdef',dongleId: '12345'});
+		assert.deepEqual(sut.getSession('abcdef'),{id: 'abcdef',connected: true,dongleId: '12345'});
 	});
 	it('Should stop', (done) => {
 		sut.server = {} ;

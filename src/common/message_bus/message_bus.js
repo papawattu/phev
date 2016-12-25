@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 import uuid from 'uuid';
 import BaseClass from '../base_class';
 import { Topics } from './topics';
+import Store from '../store/new_store_sync';
 
 export const MessageTypes = Object.freeze({ Broadcast: 'BROADCAST', Undefined: 'UNDEFINED', Request: 'REQUEST', Response: 'RESPONSE', 'Error': 'ERROR' });
 export const MessageCommands = Object.freeze({ NoOperation: 'NOOP', Get: 'GET', Add: 'ADD', Delete: 'DELETE', List: 'LIST', Shutdown: 'SHUTDOWN' });
@@ -9,6 +10,8 @@ export const MessageBusStatus = Object.freeze({ Stopped: 'STOPPED', Started: 'ST
 
 export class Message {
 	constructor({topic = Topics.DEFAULT, type = MessageTypes.Request, command = MessageCommands.noOperation, payload = undefined, correlation = false, error = null} = {}) {
+		this.createdTimestamp = new Date();
+		this.sentTimestamp = null;
 		this.topic = topic;
 		this.type = type;
 		this.command = command;
@@ -23,11 +26,11 @@ export class Message {
 		return reply;
 	}
 	toString() {
-		return JSON.stringify(this);
+		return `${this.createdTimestamp.toISOString()} Topic ${this.topic} Type ${this.type} Commmand ${this.command} Payload ${this.payload} id ${this.id}`;
 	}
 }
 export class MessageBus extends BaseClass {
-	constructor({ name = 'Message Bus' } = {}) {
+	constructor({ name = 'Message Bus',store = new Store() } = {}) {
 		super({ name });
 
 		this.eventEmitter = new EventEmitter();
@@ -35,15 +38,19 @@ export class MessageBus extends BaseClass {
 		this.status = MessageBusStatus.Stopped;
 		this.listeners = [];
 		this.subscribers = [];
+		this.store = store;
 		this.eventEmitter.on('error', (err) => {
 			this.logger.error('Whoops! there was an error in the Message Bus : ' + err);
 			throw err;
 		});
 	}
 	errorIfNotStarted() {
-		if (this.status === MessageBusStatus.Started) return;
-		this.logger.error('Message bus not started cannot send or receive messages');
-		throw new Error('Message bus not started cannot send or receive messages');
+		if (this.status === MessageBusStatus.Started) {
+			return;
+		} else {
+			this.logger.error('Message bus not started cannot send or receive messages');
+			throw new Error('Message bus not started cannot send or receive messages');
+		}
 	}
 	handleSystemCommand(data) {
 		switch (data.command) {
@@ -55,7 +62,7 @@ export class MessageBus extends BaseClass {
 	}
 	start() {
 		this.eventEmitter.on(this.name, (message) => {
-			this.logger.debug('***MESSAGE BUS ' + this.name  + ' : Message ' + JSON.stringify(message));
+			this.logger.debug('***MESSAGE BUS RECEIVE : ' + message);
 		});
 
 		this.status = MessageBusStatus.Started;
@@ -75,6 +82,9 @@ export class MessageBus extends BaseClass {
 				}
 			});
 		});
+		this.eventEmitter.on(this.name, (message) => {
+			this.store.set(message.createdTimestamp,message);
+		});
 		this.logger.info('Started Message Bus : ' + this.name);
 	}
 	stop() {
@@ -86,7 +96,8 @@ export class MessageBus extends BaseClass {
 	}
 	sendMessage(message) {
 		this.errorIfNotStarted();
-		this.logger.debug('***MESSAGE BUS ' + this.name  + ' : sendMessage ' + message);
+		message.sentTimestamp = new Date();
+		this.logger.debug('***MESSAGE BUS SEND : ' + this.name  + ' Topic: ' + message.topic + ' Message ID: ' + message.id + ' Type: ' + message.type + ' payload: ' + message.payload);
 		this.eventEmitter.emit(this.name, message);
 		return message.id;
 	}

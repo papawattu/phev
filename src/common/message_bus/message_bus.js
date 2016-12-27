@@ -26,7 +26,7 @@ export class Message {
 		return reply;
 	}
 	toString() {
-		return `${this.createdTimestamp.toISOString()} Topic ${this.topic} Type ${this.type} Commmand ${this.command} Payload ${this.payload} id ${this.id}`;
+		return `${this.createdTimestamp.toISOString()}\tTopic ${this.topic}\tType ${this.type}\tCommmand ${this.command}\tPayload ${JSON.stringify(this.payload)}\tError ${JSON.stringify(this.error)}\tid ${this.id}\tcorrelation Id ${this.correlationId}`;
 	}
 }
 export class MessageBus extends BaseClass {
@@ -62,7 +62,7 @@ export class MessageBus extends BaseClass {
 	}
 	start() {
 		this.eventEmitter.on(this.name, (message) => {
-			this.logger.debug('***MESSAGE BUS RECEIVE : ' + message);
+			this.logger.debug(this.name + ' - MESSAGE BUS RECEIVE :\t' + message.toString());
 		});
 
 		this.status = MessageBusStatus.Started;
@@ -97,7 +97,8 @@ export class MessageBus extends BaseClass {
 	sendMessage(message) {
 		this.errorIfNotStarted();
 		message.sentTimestamp = new Date();
-		this.logger.debug('***MESSAGE BUS SEND : ' + this.name  + ' Topic: ' + message.topic + ' Message ID: ' + message.id + ' Type: ' + message.type + ' payload: ' + message.payload);
+		this.logger.debug(this.name + ' - MESSAGE BUS SEND    :\t' + message.toString());
+
 		this.eventEmitter.emit(this.name, message);
 		return message.id;
 	}

@@ -54,7 +54,7 @@ export default class DongleService extends HttpService {
 		super.stop(done);
 	}
 	getDongle(id) {
-		this.logger.debug('Call to get dongle id ' + id);
+		this.logger.debug('Call to get dongle id ' + JSON.stringify(id));
 		return this.store.get(id);
 	}
 	getDongles(filter) {

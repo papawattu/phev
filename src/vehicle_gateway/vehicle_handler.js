@@ -41,7 +41,7 @@ export default class VehicleHandler extends BaseService {
 				[{
 					name: MessageCommands.NoOperation,
 					numArgs: 1,
-					handle: this.handle.bind(this),
+					handle: this.handle,
 					async: true,
 				}]);
 			done();
@@ -53,11 +53,13 @@ export default class VehicleHandler extends BaseService {
 	handle(commandLine, cb) {
 		this._findCommand(commandLine.command).handle.call(this, commandLine, cb);
 	}
-	registerConnection(dongle, cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: dongle, command: MessageCommands.Add }, (reply) => {
-			if (reply.error === undefined) {
+	registerConnection(data, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: data, command: MessageCommands.Add, producer: 'registerConnection' }, (reply) => {
+			if (reply.payload) {
+				this.logger.debug('Register connection response OK');
 				cb('OK');
 			} else {
+				this.logger.debug('Register connection response ERROR ' + reply.error);
 				cb(reply.error);
 			}
 		});
@@ -75,13 +77,13 @@ export default class VehicleHandler extends BaseService {
 		});
 	}
 	getDongle(dongleId, cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.DONGLE_TOPIC, payload: dongleId, command: MessageCommands.Get }, (data) => {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.DONGLE_TOPIC, payload: dongleId, command: MessageCommands.Get, producer: 'getDongle' }, (data) => {
 			cb(data.payload);
 		});
 	}
 	getSession(sessionId, cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: sessionId, command: MessageCommands.Get }, (reply) => {
-			if (reply.error === undefined) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: sessionId, command: MessageCommands.Get, producer: 'getSession' }, (reply) => {
+			if (reply.payload) {
 				cb(reply.payload);
 			} else {
 				cb(reply.error);
@@ -89,7 +91,7 @@ export default class VehicleHandler extends BaseService {
 		});
 	}
 	getVehicle(vin, cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_TOPIC, payload: vin, command: MessageCommands.Get }, (data) => {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_TOPIC, payload: vin, command: MessageCommands.Get, producer: 'getVehicle' }, (data) => {
 			cb(data.payload);
 		});
 	}
@@ -125,17 +127,24 @@ export default class VehicleHandler extends BaseService {
 		});
 
 	}
-	password(id) {
-		const dongleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: id, correlation: true });
-
-		this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: dongleMessage.correlationId, type: MessageTypes.Response }, (data) => {
-			const vehicleMessage = new Message({ topic: Topics.DONGLE_TOPIC, type: MessageTypes.Request, command: MessageCommands.Get, payload: data.vin, correlation: true });
-
-			this.messageBus.receiveMessageFilter(Topics.DONGLE_TOPIC, { correlationId: vehicleMessage.correlationId, type: MessageTypes.Response }, (data) => {
-				return data.password;
-			});
-			this.messageBus.sendMessage(vehicleMessage);
+	password(cmd,cb) {
+		this.getSession(cmd.id, (session) => {
+			if (session) {
+				if (session.connected) {
+					this.getVehicleFromDongleId(session.dongleId, (vehicle) => {
+						if (vehicle !== undefined) {
+							cb('PASSWORD ' + vehicle.password);
+						} else {
+							cb('ERROR');
+						}
+					});
+				} else {
+					cb('ERROR');
+				}
+			} else {
+				this.logger.error('Vehicle Handler SSID : Cannot find session for id ' + cmd.id);
+				cb('ERROR');
+			}
 		});
-		this.messageBus.sendMessage(dongleMessage);
 	}
 }

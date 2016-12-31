@@ -19,32 +19,31 @@ export default class BaseService extends BaseClass {
 		this.status = ServiceStatus.Stopped;
 		done();
 	}
-	execute(commands,message,replyMessage) {
+	execute(commands, message, replyMessage) {
 		const cmd = commands.find(e => e.name === message.command);
-		if (cmd.async) {
-	
-			cmd.handle.call(this, message.payload, (data) => {
-				replyMessage.payload = data;
-				this.messageBus.sendMessage(replyMessage);
-			});
-		} else {
-	
-			try {
+		try {
+			if (cmd.async) {
+
+				cmd.handle.call(this, message.payload, (data) => {
+					replyMessage.payload = data;
+					this.messageBus.sendMessage(replyMessage);
+				});
+			} else {
 				replyMessage.payload =
 					commands.find(e => e.name === message.command)
 						.handle.call(this, message.payload);
-			} catch (err) {
-				this.logger.error(this.name + ' register message handler command failed ' + err);
-				replyMessage.error = err;
 			}
 			this.messageBus.sendMessage(replyMessage);
 
+		} catch (err) {
+			this.logger.error(this.name + ' register message handler command failed ' + err);
+			replyMessage.error = err;
 		}
 	}
 	registerMessageHandler(topic, schema, filter, commands) {
 		this.messageBus.subscribe(topic, filter, (message) => {
 			const replyMessage = Message.replyTo(message);
-			this.execute(commands,message,replyMessage);
+			this.execute(commands, message, replyMessage);
 		});
 	}
 }

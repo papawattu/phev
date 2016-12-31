@@ -81,7 +81,7 @@ describe('Integration tests', () => {
 				});
 			});
 		});
-		it.skip('Should connect but return NOT REGISTERED', (done) => {
+		it('Should connect but return NOT REGISTERED', (done) => {
 			client.write(eol('CONNECT notregistered'), () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
@@ -98,7 +98,7 @@ describe('Integration tests', () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.toString().length > 0, 'SSID should be returned  : ' + data.toString());
-					assert(data.toString() === eol('SSID SSID123'), 'SSID should be SSID123 is ' + data.toString());
+					assert(data.toString() === eol('SSID REMOTE123456'), 'SSID should be REMOTE123456 is ' + data.toString());
 					done();
 				});
 			});
@@ -108,7 +108,7 @@ describe('Integration tests', () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.toString().length > 0, 'PASSWORD should be returned  : ' + data.toString());
-					assert(data.toString() === eol('PASSWORD123'), 'Password should be PASSWORD123 is ' + data.toString());
+					assert(data.toString() === eol('PASSWORD qwertyuiop'), 'Password should be qwertyuiop is ' + data.toString());
 					done();
 				});
 			});

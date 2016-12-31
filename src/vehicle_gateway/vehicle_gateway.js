@@ -8,25 +8,12 @@ import Store from '../common/store/new_store_sync';
 
 const CRLF = '\r\n';
 
-class VehicleSession extends BaseClass {
-	constructor({socket ,handle}) {
-		super({ name: 'VehicleSession' });
+class VehicleSession {
+	constructor() {
+		//super({ name: 'VehicleSession' });
 		this.id = uuid();
 		this.dongleId = null;
-		this.socket = socket;
 		this.connected = false;
-		this.socket.on('data', (data) => {
-			const cmdLine = data.toString().split(/[, \t\r\n]+/);	
-			handle({ id: this.id, command: cmdLine[0], args: cmdLine.slice(1) }, (msg) => {
-				this.send(msg.payload);
-			});
-		});
-	}
-	send(message) {
-		this.socket.write(message + CRLF);
-	}
-	toString() {
-		return JSON.stringify(this,['id','dongleId','connected']);
 	}
 }
 
@@ -37,18 +24,30 @@ export default class VehicleGateway extends HttpService {
 		this.gatewayPort = gatewayPort;
 		this.store = store;
 		this.server = null;
+		this.socketTable = [];
 	}
 	handle(cmd,cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_HANDLER_TOPIC, payload: cmd, command: MessageCommands.NoOperation }, (msg) => {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_HANDLER_TOPIC, payload: cmd, command: MessageCommands.NoOperation,producer: `handle ${cmd.command}`}, (msg) => {
 			cb(msg);
 		});
 	}
 	handleNewConnection(socket) {
 
-		const session = new VehicleSession({ socket, handle: this.handle.bind(this) });
+		this.socketTable.push(socket);
+		
+		const session = new VehicleSession();
 
-		this.store.set(session.id, {id: session.id,connected: false,dongleId: null});
-		session.send('HELLO PHEV');
+		socket.on('data', (data) => {
+			const cmdLine = data.toString().split(/[, \t\r\n]+/);	
+			this.handle({ id: session.id, command: cmdLine[0], args: cmdLine.slice(1) }, (msg) => {
+				socket.write(msg.payload + CRLF);
+			});
+		});
+
+		this.store.set(session.id, session);
+		
+		this.logger.debug('Vehicle gateway - created new session ' + session.id);
+		socket.write('HELLO PHEV' + CRLF);
 		
 		return session;
 	}
@@ -58,14 +57,17 @@ export default class VehicleGateway extends HttpService {
 	validateSession(data) {
 		const session = this.store.get(data.sessionId);
 		
-		this.logger.debug('Data : ' + JSON.stringify(data));
-		this.logger.debug('Session : ' + JSON.stringify(session));
+		if(!session) {
+			this.logger.error('Session cannot be validated as not found : ' + data.getSessionId);
+			throw new Error('Session cannot be validated as not found : ' + data.getSessionId);
+		}
+		this.logger.debug('validateSession - Data : ' + JSON.stringify(data));
 		
 		session.connected = true;
 		session.dongleId = data.dongleId;
-		this.store.set(data.sessionId,session);
-		this.logger.debug(JSON.stringify(session));
 		
+		this.store.set(data.sessionId,session);
+		this.logger.debug('validateSession - Stored Session : ' + JSON.stringify(session));
 		return session;
 	}
 	start(done) {
@@ -80,7 +82,7 @@ export default class VehicleGateway extends HttpService {
 					name: MessageCommands.Add,
 					numArgs: 1,
 					handle: this.validateSession,
-					async: true,
+					async: false,
 				}]);
 
 			if(this.server === null) {
@@ -98,6 +100,7 @@ export default class VehicleGateway extends HttpService {
 					done();
 				}
 			});
+			this.socketTable = [];
 		});
 
 	}

@@ -9,7 +9,7 @@ export const MessageCommands = Object.freeze({ NoOperation: 'NOOP', Get: 'GET', 
 export const MessageBusStatus = Object.freeze({ Stopped: 'STOPPED', Started: 'STARTED' });
 
 export class Message {
-	constructor({topic = Topics.DEFAULT, type = MessageTypes.Request, command = MessageCommands.noOperation, payload = undefined, correlation = false, error = null} = {}) {
+	constructor({topic = Topics.DEFAULT, type = MessageTypes.Request, command = MessageCommands.noOperation, payload = undefined, correlation = false, error = null, producer = 'default'} = {}) {
 		this.createdTimestamp = new Date();
 		this.sentTimestamp = null;
 		this.topic = topic;
@@ -19,6 +19,7 @@ export class Message {
 		this.error = error;
 		this.id = uuid();
 		this.correlationId = (correlation ? uuid() : null);
+		this.producer = producer;
 	}
 	static replyTo(message) {
 		const reply = new Message({ topic: message.topic, type: MessageTypes.Response, command: message.command });
@@ -26,7 +27,7 @@ export class Message {
 		return reply;
 	}
 	toString() {
-		return `${this.createdTimestamp.toISOString()}\tTopic ${this.topic}\tType ${this.type}\tCommmand ${this.command}\tPayload ${JSON.stringify(this.payload)}\tError ${JSON.stringify(this.error)}\tid ${this.id}\tcorrelation Id ${this.correlationId}`;
+		return `${this.createdTimestamp.toISOString()}\tTopic ${this.topic}\tProducer ${this.producer}\tType ${this.type}\tCommmand ${this.command}\tPayload ${JSON.stringify(this.payload)}\tError ${JSON.stringify(this.error)}\tid ${this.id}\tcorrelation Id ${this.correlationId}`;
 	}
 }
 export class MessageBus extends BaseClass {
@@ -119,12 +120,12 @@ export class MessageBus extends BaseClass {
 		this.listeners.push({topic: topic, filter: f, callback: callback});
 		
 	}
-	sendAndReceiveMessage({topic,payload,command = MessageCommands.NoOperation}, callback) {
+	sendAndReceiveMessage({topic,payload,command = MessageCommands.NoOperation,producer = 'default'}, callback) {
 		this.errorIfNotStarted();
 		
-		this.logger.debug('MESSAGE BUS ' + this.name  + ' : sendAndReceiveMessage topic ' + topic + ' Calling callback');
+		this.logger.debug('MESSAGE BUS ' + this.name  + ' producer: ' + producer + ' : sendAndReceiveMessage topic ' + topic + ' Calling callback');
 		
-		const message = new Message({ topic :topic,type: MessageTypes.Request,payload: payload,command: command, correlation: true});
+		const message = new Message({ topic :topic,type: MessageTypes.Request,payload: payload,command: command, correlation: true,producer: producer});
 		
 		this.receiveMessageFilter(topic,{type: MessageTypes.Response,command: command, correlationId: message.correlationId}, (data) => {
 			callback(data);

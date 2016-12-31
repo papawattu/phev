@@ -54,7 +54,7 @@ describe('Integration Tests', () => {
 					return done();
 				});
 		});
-		it('Should not register twice', (done) => {
+		it.skip('Should not register twice', (done) => {
 			const req = {
 				register: {
 					user: {

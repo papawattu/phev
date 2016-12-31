@@ -19,7 +19,7 @@ describe('Vehicle Handler', () => {
 	});
 	it('Should handle connect', (done) => {
 		Mocks.messageBus.sendMessage.reset();
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: '{}' });
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: {connected: true} });
 		//Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({payload: 'OK'});
 
 		sut.handle({ command: 'CONNECT', args: ['12345'] }, (response) => {
@@ -37,7 +37,7 @@ describe('Vehicle Handler', () => {
 		});
 	});
 	it('Should handle error when try to update connection session', (done) => {
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ error: 'ERROR' });
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ error: 'ERROR',payload: null });
 		sut.registerConnection('12345', (response) => {
 			assert.equal(response, 'ERROR');
 			assert(Mocks.messageBus.sendAndReceiveMessage.calledOnce);

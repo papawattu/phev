@@ -32,12 +32,12 @@ export default class BaseService extends BaseClass {
 				replyMessage.payload =
 					commands.find(e => e.name === message.command)
 						.handle.call(this, message.payload);
+				this.messageBus.sendMessage(replyMessage);
 			}
-			this.messageBus.sendMessage(replyMessage);
-
 		} catch (err) {
 			this.logger.error(this.name + ' register message handler command failed ' + err);
 			replyMessage.error = err;
+			this.messageBus.sendMessage(replyMessage);
 		}
 	}
 	registerMessageHandler(topic, schema, filter, commands) {

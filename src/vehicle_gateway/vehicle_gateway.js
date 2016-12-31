@@ -14,6 +14,7 @@ class VehicleSession {
 		this.id = uuid();
 		this.dongleId = null;
 		this.connected = false;
+		this.wifiConnected = false;
 	}
 }
 
@@ -54,6 +55,9 @@ export default class VehicleGateway extends HttpService {
 	getSession(id) {
 		return this.store.get(id);
 	}
+	setSession(session) {
+		return this.store.set(session.id,session);
+	}
 	validateSession(data) {
 		const session = this.store.get(data.sessionId);
 		
@@ -79,9 +83,14 @@ export default class VehicleGateway extends HttpService {
 					handle: this.getSession,
 					async: false,
 				}, {
-					name: MessageCommands.Add,
+					name: 'validateSession',
 					numArgs: 1,
 					handle: this.validateSession,
+					async: false,
+				},{
+					name: MessageCommands.Add,
+					numArgs: 1,
+					handle: this.setSession,
 					async: false,
 				}]);
 

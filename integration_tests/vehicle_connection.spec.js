@@ -19,14 +19,11 @@ const EOL = '\r\n';
 
 const eol = (str) => str + EOL;
 const client = new net.Socket();
-describe('Integration tests', () => {
+describe('Vehicle Connection Integration tests', () => {
 	before((done) => {
 
 		app = new App();
 
-	//	setTimeout(() => {
-	//		while(app.status == 'NOT STARTED');
-	//	},1000);
 		const req = {
 			register: {
 				user: {
@@ -109,6 +106,16 @@ describe('Integration tests', () => {
 					logger.debug('Received: ' + data);
 					assert(data.toString().length > 0, 'PASSWORD should be returned  : ' + data.toString());
 					assert(data.toString() === eol('PASSWORD qwertyuiop'), 'Password should be qwertyuiop is ' + data.toString());
+					done();
+				});
+			});
+		});
+		it('Should handle wifi on', (done) => {
+			client.write(eol('WIFION'), () => {
+				client.once('data', (data) => {
+					logger.debug('Received: ' + data);
+					assert(data.toString().length > 0, 'OK should be returned  : ' + data.toString());
+					assert(data.toString() === eol('OK'), 'OK should be returned is ' + data.toString());
 					done();
 				});
 			});

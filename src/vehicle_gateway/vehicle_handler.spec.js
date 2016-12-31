@@ -19,9 +19,7 @@ describe('Vehicle Handler', () => {
 	});
 	it('Should handle connect', (done) => {
 		Mocks.messageBus.sendMessage.reset();
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: {connected: true} });
-		//Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({payload: 'OK'});
-
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true } });
 		sut.handle({ command: 'CONNECT', args: ['12345'] }, (response) => {
 			assert.equal(response, 'OK');
 			assert(Mocks.messageBus.sendAndReceiveMessage.calledTwice);
@@ -37,7 +35,7 @@ describe('Vehicle Handler', () => {
 		});
 	});
 	it('Should handle error when try to update connection session', (done) => {
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ error: 'ERROR',payload: null });
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ error: 'ERROR', payload: null });
 		sut.registerConnection('12345', (response) => {
 			assert.equal(response, 'ERROR');
 			assert(Mocks.messageBus.sendAndReceiveMessage.calledOnce);
@@ -45,17 +43,39 @@ describe('Vehicle Handler', () => {
 		});
 	});
 	it('Should get session', (done) => {
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: {connected: true} });
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true } });
 		sut.getSession('12345', (response) => {
 			assert.isTrue(response.connected);
 			done();
 		});
 
 	});
+	it('Should set session', (done) => {
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { id: '12345' } });
+		sut.setSession({id:'12345'}, (response) => {
+			assert.equal(response.id,'12345');
+			done();
+		});
+
+	});
 	it('Should handle get SSID', (done) => {
-		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: {connected:true,ssid: 'mysecret',dongleId: '54321', id:'54321',vin: '12345'} });
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true, ssid: 'mysecret', dongleId: '54321', id: '54321', vin: '12345' } });
 		sut.ssid({ command: 'SSID', id: '54321' }, (response) => {
 			assert.equal(response, 'SSID mysecret');
+			done();
+		});
+	});
+	it('Should handle get Password', (done) => {
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true, password: 'mysecret', dongleId: '54321', id: '54321', vin: '12345' } });
+		sut.password({ command: 'PASSWORD', id: '54321' }, (response) => {
+			assert.equal(response, 'PASSWORD mysecret');
+			done();
+		});
+	});
+	it('Should handle Wifi on', (done) => {
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true, password: 'mysecret', dongleId: '54321', id: '54321', vin: '12345',wifiConnected: true } });
+		sut.wifi({ command: 'WIFION', id: '54321' }, (response) => {
+			assert.equal(response, 'OK');
 			done();
 		});
 	});

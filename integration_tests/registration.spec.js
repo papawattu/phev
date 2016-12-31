@@ -15,7 +15,7 @@ const assert = chai.use(chaiAsPromised).assert;
 let app = null;
 
 
-describe('Integration Tests', () => {
+describe('Registration Integration Tests', () => {
 	before(() => {
 		app = new App();		
 	});
@@ -54,7 +54,7 @@ describe('Integration Tests', () => {
 					return done();
 				});
 		});
-		it.skip('Should not register twice', (done) => {
+		it('Should not register twice', (done) => {
 			const req = {
 				register: {
 					user: {

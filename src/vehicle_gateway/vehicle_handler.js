@@ -1,4 +1,4 @@
-import { MessageTypes, MessageCommands, Message } from '../common/message_bus/message_bus';
+import { MessageTypes, MessageCommands } from '../common/message_bus/message_bus';
 import { Topics } from '../common/message_bus/topics';
 import BaseService from '../common/base_service';
 
@@ -23,6 +23,10 @@ export default class VehicleHandler extends BaseService {
 			name: 'PASSWORD',
 			numArgs: 0,
 			handle: this.password
+		}, {
+			name: 'WIFION',
+			numArgs: 0,
+			handle: this.wifi
 		}];
 
 	}
@@ -54,7 +58,7 @@ export default class VehicleHandler extends BaseService {
 		this._findCommand(commandLine.command).handle.call(this, commandLine, cb);
 	}
 	registerConnection(data, cb) {
-		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: data, command: MessageCommands.Add, producer: 'registerConnection' }, (reply) => {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: data, command: 'validateSession', producer: 'registerConnection' }, (reply) => {
 			if (reply.payload) {
 				this.logger.debug('Register connection response OK');
 				cb('OK');
@@ -90,6 +94,15 @@ export default class VehicleHandler extends BaseService {
 			}
 		});
 	}
+	setSession(session, cb) {
+		this.messageBus.sendAndReceiveMessage({ topic: Topics.GATEWAY_TOPIC, payload: session, command: MessageCommands.Add, producer: 'setSession' }, (reply) => {
+			if (reply.payload) {
+				cb(reply.payload);
+			} else {
+				cb(reply.error);
+			}
+		});
+	}
 	getVehicle(vin, cb) {
 		this.messageBus.sendAndReceiveMessage({ topic: Topics.VEHICLE_TOPIC, payload: vin, command: MessageCommands.Get, producer: 'getVehicle' }, (data) => {
 			cb(data.payload);
@@ -107,44 +120,57 @@ export default class VehicleHandler extends BaseService {
 		});
 	}
 	ssid(cmd, cb) {
+		this.getVehicleFromSession(cmd, (vehicle) => {
+			if (vehicle !== 'ERROR') {
+				cb('SSID ' + vehicle.ssid);
+			} else {
+				cb('ERROR');
+			}
+		});
+	}
+	password(cmd, cb) {
+		this.getVehicleFromSession(cmd, (vehicle) => {
+			if (vehicle !== 'ERROR') {
+				cb('PASSWORD ' + vehicle.password);
+			} else {
+				cb('ERROR');
+			}
+		});
+	}
+	getVehicleFromSession(cmd, cb) {
 		this.getSession(cmd.id, (session) => {
 			if (session) {
 				if (session.connected) {
 					this.getVehicleFromDongleId(session.dongleId, (vehicle) => {
-						if (vehicle !== undefined) {
-							cb('SSID ' + vehicle.ssid);
+						cb(vehicle);
+					});
+				} else {
+					cb('ERROR');
+				}
+			} else {
+				this.logger.error('Vehicle Handler get vehicle from sessopm : Cannot find session for id ' + cmd.id);
+				cb('ERROR');
+			}
+		});
+	}
+	wifi(cmd, cb) {
+		this.getSession(cmd.id, (session) => {
+			if (session) {
+				if (session.connected) {
+					session.wifiConnected = true;
+					this.setSession(session, () => {
+						if(session) {
+							cb('OK');
 						} else {
-							cb('ERROR');
+							cb('ERROR');				
 						}
 					});
 				} else {
 					cb('ERROR');
 				}
 			} else {
-				this.logger.error('Vehicle Handler SSID : Cannot find session for id ' + cmd.id);
 				cb('ERROR');
 			}
 		});
-
-	}
-	password(cmd,cb) {
-		this.getSession(cmd.id, (session) => {
-			if (session) {
-				if (session.connected) {
-					this.getVehicleFromDongleId(session.dongleId, (vehicle) => {
-						if (vehicle !== undefined) {
-							cb('PASSWORD ' + vehicle.password);
-						} else {
-							cb('ERROR');
-						}
-					});
-				} else {
-					cb('ERROR');
-				}
-			} else {
-				this.logger.error('Vehicle Handler SSID : Cannot find session for id ' + cmd.id);
-				cb('ERROR');
-			}
-		});
-	}
+	} 
 }

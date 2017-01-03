@@ -105,7 +105,7 @@ describe('Vehicle Connection Integration tests', () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.toString().length > 0, 'PASSWORD should be returned  : ' + data.toString());
-					assert(data.toString() === eol('PASSWORD qwertyuiop'), 'Password should be qwertyuiop is ' + data.toString());
+					assert(data.toString() === eol('PASSWORD qwertyuiop'), 'Password should be \'qwertyuiop\' is ' + data.toString());
 					done();
 				});
 			});

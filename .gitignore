@@ -5,5 +5,6 @@ coverage/
 rest/
 lib/
 logs/*
+.nyc_output/
 phev.iml
 npm-debug.log

@@ -68,12 +68,12 @@ export default class DongleService extends HttpService {
 	//			this.logger.error('Add dongle validation error ' + err + ' value ' + value);
 	//			throw err;
 	//		}
-			if (this.store.has(dongle.id)) {
-				this.logger.error('Dongle already exists ' + dongle.id);
-				throw new Error('Dongle already exists ' + dongle.id);
-			}
-			this.store.set(dongle.id, dongle);
-			return;
+		if (this.store.has(dongle.id)) {
+			this.logger.error('Dongle already exists ' + dongle.id);
+			throw new Error('Dongle already exists ' + dongle.id);
+		}
+		this.store.set(dongle.id, dongle);
+		return;
 	//	});
 	}
 }

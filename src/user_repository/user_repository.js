@@ -71,11 +71,11 @@ export default class UserRepository extends HttpService {
 				throw err;
 			}
 		*/	if (this.store.has(user.username)) {
-				this.logger.error('Username already exists : ' + user.username);
-				throw new Error('Username already exists : ' + user.username);
-			}
-			this.store.set(user.username, user);
-			return;
+			this.logger.error('Username already exists : ' + user.username);
+			throw new Error('Username already exists : ' + user.username);
+		}
+		this.store.set(user.username, user);
+		return;
 	//	});
 	}
 }

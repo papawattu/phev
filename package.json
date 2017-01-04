@@ -11,7 +11,8 @@
     "test-watch": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-register --watch --recursive ./src",
     "test-integration": "node_modules/.bin/_mocha --compilers js:babel-register --recursive ./integration_tests",
     "integration-test": "npm run build && npm run test-integration",
-    "eslint": "./node_modules/.bin/eslint ./src ./integration_tests ./features --fix"
+    "eslint": "./node_modules/.bin/eslint ./src ./integration_tests ./features --fix",
+    "coverage": "./node_modules/.bin/nyc --require babel-core/register node_modules/.bin/mocha --recursive ./src"
   },
   "repository": {
     "type": "git",
@@ -22,8 +23,10 @@
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
     "babel-plugin-resolver": "^1.1.0",
     "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
     "babel-preset-latest": "^6.16.0",
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
@@ -35,8 +38,9 @@
     "http-status": "^0.2.3",
     "istanbul": "^0.4.5",
     "jenkins-mocha": "^3.0.4",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "mocha-junit-reporter": "^1.12.1",
+    "nyc": "^10.0.0",
     "pre-commit": "^1.1.3",
     "redis-js": "^0.1.2",
     "sinon": "^1.17.6",

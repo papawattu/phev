@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="8b13ea13-df39-4496-8aba-1b426a759369" activeEnvironment="Default" name="REST Project 1" soapui-version="5.2.1" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="2351432c-6a4a-409b-862f-a6f842633bf8" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://vps166723.ovh.net:3030" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache/><con:endpoints><con:endpoint>http://vps166723.ovh.net:3030</con:endpoint></con:endpoints><con:resource name="Registration" path="/registration" id="784dd697-e103-49e2-8f41-a4427f50c2fd"><con:settings/><con:parameters/><con:method name="Registration" id="0a69b17d-3975-4733-adef-0d7b07d7ee9d" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>201</con:status><con:params/><con:element xmlns:reg="http://vps166723.ovh.net/registration">reg:Response</con:element></con:representation><con:request name="Request 1" id="25da7d44-f863-4ff3-be9a-c03a98986e08" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://vps166723.ovh.net:3030</con:endpoint><con:request>{
+	"register": {
+		"user": {
+			"firstName": "Jamie",
+			"lastName": "Nuttall",
+			"username": "papawattu",
+			"password": "Pa55word!",
+			"email": "jamie@me.com"
+		},
+		"vehicle": {
+			"ssid": "REMOTE123456",
+			"password": "qwertyuiop",
+			"vin": "VIN1234"
+		},
+		"dongle": {
+			"id": "00000000-4847a89c-00000000"
+		}
+	}
+}</con:request><con:originalUri>http://vps166723.ovh.net/registration</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

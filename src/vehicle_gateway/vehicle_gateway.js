@@ -15,6 +15,7 @@ class VehicleSession {
 		this.dongleId = null;
 		this.connected = false;
 		this.wifiConnected = false;
+        this.ready = false;
 	}
 }
 

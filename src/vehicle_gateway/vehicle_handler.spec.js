@@ -82,7 +82,14 @@ describe('Vehicle Handler', () => {
     it('Should handle host', (done) => {
 		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true, password: 'mysecret', dongleId: '54321', id: '54321', vin: '12345',wifiConnected: true } });
 		sut.host({ command: 'HOST', id: '54321' }, (response) => {
-			assert.equal(response, '192.168.6.46 8080');
+			assert.equal(response, 'HOST 192.168.6.46 8080');
+			done();
+		});
+	});
+    it('Should handle ready', (done) => {
+		Mocks.messageBus.sendAndReceiveMessage = sinon.stub().yields({ payload: { connected: true, password: 'mysecret', dongleId: '54321', id: '54321', vin: '12345',wifiConnected: true } });
+		sut.ready({ command: 'READY', id: '54321' }, (response) => {
+			assert.equal(response, 'OK');
 			done();
 		});
 	});

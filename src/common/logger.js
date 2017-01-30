@@ -4,7 +4,7 @@ winston.emitErrs = true;
 
 export const logger = new winston.Logger({
 	transports: [
-		new winston.transports.File({
+	/*	new winston.transports.File({
 			name: 'error',
 			filename: 'logs/app-error.log',
 			timestamp: true,
@@ -21,7 +21,7 @@ export const logger = new winston.Logger({
 			handleExceptions: true,
 			json: false,
 			colorize: true
-		}),
+		}), */
         new winston.transports.Console({
 			name: 'console',
 			timestamp: true,
@@ -29,7 +29,7 @@ export const logger = new winston.Logger({
 			handleExceptions: true,
 			json: false,
 			colorize: true
-		}),
+}), /*
 		new winston.transports.File({
 			name: 'debug',
 			filename: 'logs/app-debug.log',
@@ -38,7 +38,7 @@ export const logger = new winston.Logger({
 			handleExceptions: true,
 			json: false,
 			colorize: true
-		})
+		}) */
 	],
 	exitOnError: false,
 });

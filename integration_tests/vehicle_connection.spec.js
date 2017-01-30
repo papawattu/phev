@@ -125,7 +125,17 @@ describe('Vehicle Connection Integration tests', () => {
                 client.once('data', (data) => {
                     logger.debug('Received: ' + data);
                     assert(data.toString().length > 0, 'Host and port should be returned  : ' + data.toString());
-                    assert(data.toString() === eol('192.168.6.46 8080'), '192.168.6.46 8080 should be returned is ' + data.toString());
+                    assert(data.toString() === eol('HOST 192.168.6.46 8080'), 'HOST 192.168.6.46 8080 should be returned is ' + data.toString());
+                    done();
+                });
+            });
+        });
+        it('Should handle ready', (done) => {
+            client.write(eol('READY'), () => {
+                client.once('data', (data) => {
+                    logger.debug('Received: ' + data);
+                    assert(data.toString().length > 0, 'OK should be returned  : ' + data.toString());
+                    assert(data.toString() === eol('OK'), 'OK should be returned is ' + data.toString());
                     done();
                 });
             });

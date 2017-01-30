@@ -12,7 +12,9 @@
     "test-integration": "node_modules/.bin/_mocha --compilers js:babel-register --recursive ./integration_tests",
     "integration-test": "npm run build && npm run test-integration",
     "eslint": "./node_modules/.bin/eslint ./src ./integration_tests ./features --fix",
-    "coverage": "./node_modules/.bin/nyc --require babel-core/register node_modules/.bin/mocha --recursive ./src"
+    "coverage": "./node_modules/.bin/nyc --require babel-core/register node_modules/.bin/mocha --recursive ./src",
+    "docker-build": "npm run build && docker build -t phev .",
+    "docker-run": "npm run docker-build && docker run --rm --name phev -p 1974:1974 -p 3000:3003 -p 3030:3030 phev"
   },
   "repository": {
     "type": "git",

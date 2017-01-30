@@ -27,6 +27,10 @@ export default class VehicleHandler extends BaseService {
 			name: 'WIFION',
 			numArgs: 0,
 			handle: this.wifi
+		}, {
+			name: 'HOST',
+			numArgs: 0,
+			handle: this.host
 		}];
 
 	}
@@ -111,10 +115,10 @@ export default class VehicleHandler extends BaseService {
 	getVehicleFromDongleId(dongleId, cb) {
 		this.getDongle(dongleId, (dongle) => {
 			if (dongle !== undefined) {
-				this.logger.debug('EYE CATCHER - Found dongle ' + dongle);
+				this.logger.debug('Found dongle ' + dongle);
 				this.getVehicle(dongle.vin, (vehicle) => cb(vehicle));
 			} else {
-				this.logger.debug('EYE CATCHER - Could not find dongle Id ' + dongleId);
+				this.logger.debug('Could not find dongle Id ' + dongleId);
 				cb(undefined);
 			}
 		});
@@ -165,6 +169,19 @@ export default class VehicleHandler extends BaseService {
 							cb('ERROR');				
 						}
 					});
+				} else {
+					cb('ERROR');
+				}
+			} else {
+				cb('ERROR');
+			}
+		});
+	} 
+    host(cmd, cb) {
+		this.getSession(cmd.id, (session) => {
+			if (session) {
+				if (session.wifiConnected) {
+					cb('192.168.6.46 8080');
 				} else {
 					cb('ERROR');
 				}

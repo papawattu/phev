@@ -70,7 +70,7 @@ describe('Registration Integration Tests', () => {
 						vin: 'VIN1234',
 					},
 					dongle: {
-						id: '12345',
+						id: '00000000-addeadde-addeadde',
 					}
 				}
 			};

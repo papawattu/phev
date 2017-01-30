@@ -39,7 +39,7 @@ describe('Vehicle Connection Integration tests', () => {
 					vin: 'VIN1234',
 				},
 				dongle: {
-					id: '12345',
+					id: '00000000-addeadde-addeadde',
 				}
 			}
 		};
@@ -69,7 +69,7 @@ describe('Vehicle Connection Integration tests', () => {
 			});
 		});
 		it('Should connect and return OK', (done) => {
-			client.write(eol('CONNECT 12345'), () => {
+			client.write(eol('CONNECT 00000000-addeadde-addeadde'), () => {
 				client.once('data', (data) => {
 					logger.debug('Received: ' + data);
 					assert(data.length > 0);

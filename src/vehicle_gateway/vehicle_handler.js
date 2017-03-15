@@ -181,7 +181,7 @@ export default class VehicleHandler extends BaseService {
 			}
 		});
 	} 
-    host(cmd, cb) {
+	host(cmd, cb) {
 		this.getSession(cmd.id, (session) => {
 			if (session) {
 				if (session.wifiConnected) {
@@ -194,12 +194,12 @@ export default class VehicleHandler extends BaseService {
 			}
 		});
 	} 
-    ready(cmd,cb) {
-        this.getSession(cmd.id, (session) => {
+	ready(cmd,cb) {
+		this.getSession(cmd.id, (session) => {
 			if (session) {
 				if (session.wifiConnected) {
-                    session.ready = true;
-                    this.setSession(session, () => {
+					session.ready = true;
+					this.setSession(session, () => {
 						if(session) {
 							cb('OK');
 						} else {
@@ -211,5 +211,5 @@ export default class VehicleHandler extends BaseService {
 				cb('ERROR');
 			}
 		});
-    }
+	}
 }

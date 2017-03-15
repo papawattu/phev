@@ -22,14 +22,14 @@ export const logger = new winston.Logger({
 			json: false,
 			colorize: true
 		}), */
-        new winston.transports.Console({
+		new winston.transports.Console({
 			name: 'console',
 			timestamp: true,
 			level: 'info',
 			handleExceptions: true,
 			json: false,
 			colorize: true
-}), /*
+		}), /*
 		new winston.transports.File({
 			name: 'debug',
 			filename: 'logs/app-debug.log',

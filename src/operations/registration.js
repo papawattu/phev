@@ -5,8 +5,8 @@ import * as Joi from 'joi';
 import HttpService from '../common/http_service';
 
 export default class Registration extends HttpService {
-	constructor({ messageBus}) {
-		super({ messageBus, name: 'Registration'});
+	constructor({ messageBus,port }) {
+		super({ messageBus, name: 'Registration',port});
 		this.logger.info('Started Registration');
 	}
 	start() {
@@ -85,7 +85,7 @@ export default class Registration extends HttpService {
 		return new Promise((resolve, reject) => {
 			Joi.validate(reg, RegistrationSchema, (err, value) => {
 				if (err) {
-					this.logger.error('Validation rejected ' + JSON.stringify(value));
+					this.logger.error(`Validation rejected : ${JSON.stringify(value)}`);
 					reject(err);
 				} else {
 					resolve(value);
@@ -99,7 +99,7 @@ export default class Registration extends HttpService {
 			]).then((resp) => {
 				return resp;
 			}).catch((err) => {
-				this.logger.error('Failed to register ' + err);
+				this.logger.error('Failed to register $(err)');
 				return Promise.reject(err);
 			});
 		}).catch((err) => {

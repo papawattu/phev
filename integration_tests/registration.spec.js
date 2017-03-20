@@ -17,10 +17,10 @@ let app = null;
 
 describe('Registration Integration Tests', () => {
 	before(() => {
-		app = new App();
+		//app = new App();
 	});
-	after((done) => {
-		app.stop(done);
+	after(() => {
+		//app.stop(done);
 	});
 	describe('Registration operations', () => {
 		it('Should register', (done) => {

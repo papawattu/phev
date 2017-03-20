@@ -1,11 +1,13 @@
 import BaseService from '../common/base_service';
 import Registration from './registration';
+import Lights from './lights';
 
 export default class Operations extends BaseService {
 	constructor({ messageBus,
-		operations = [
-			new Registration({ messageBus })
-		]}) {
+        operations = [
+	new Registration({ messageBus, port: 3030 }),
+	new Lights({ messageBus, port : 3031 }),
+] }) {
 
 		super({ messageBus, name: 'Operations' });
 
@@ -36,7 +38,5 @@ export default class Operations extends BaseService {
 			});
 			done();
 		});
-
-
 	}
 }

@@ -22,7 +22,7 @@ const client = new net.Socket();
 describe('Vehicle Connection Integration tests', () => {
 	before((done) => {
 
-		app = new App();
+		//app = new App();
 
 		const req = {
 			register: {
@@ -54,9 +54,9 @@ describe('Vehicle Connection Integration tests', () => {
 	return done();
 });
 	});
-	after((done) => {
-		app.stop(done);
-	});
+//	after((done) => {
+//		app.stop(done);
+//	});
 	describe('Connect vehicle', () => {
 		it('Should connect and return HELLO PHEV', (done) => {
 			client.connect(PORT, HOST, () => {

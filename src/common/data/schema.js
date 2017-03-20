@@ -23,3 +23,6 @@ export const RegistrationSchema = Joi.object({
 		dongle: DongleSchema,
 	})
 });
+export const LightsSchema = Joi.object({
+	status: Joi.string().required()
+});

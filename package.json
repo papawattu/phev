@@ -50,6 +50,7 @@
     "superagent": "^2.3.0"
   },
   "dependencies": {
+    "mqtt-client": "papawattu/mqtt",  
     "cache-base": "^0.8.4",
     "hapi": "^15.2.0",
     "joi": "^10.2.0",
